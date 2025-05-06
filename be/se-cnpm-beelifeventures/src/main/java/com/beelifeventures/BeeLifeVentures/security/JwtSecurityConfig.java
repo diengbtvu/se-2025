@@ -37,7 +37,7 @@ public class JwtSecurityConfig {
                     "/swagger-ui.html",
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
-                    "/api/auth/**",
+                    "/api/**",
                     "/fe/**",
                     "/**" // Lưu ý: dòng này sẽ mở toàn bộ endpoint, thường dùng để test
                 ).permitAll()
@@ -50,19 +50,33 @@ public class JwtSecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//
+//        configuration.setAllowedOrigins(List.of("*")); // Hoặc List.of("http://localhost:3000") khi test FE
+//        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//        configuration.setAllowedHeaders(List.of("*"));
+//        configuration.setAllowCredentials(true); // Để true nếu dùng cookie/token qua domain
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
+            CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("*")); // Hoặc List.of("http://localhost:3000") khi test FE
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true); // Để true nếu dùng cookie/token qua domain
+            // Sử dụng allowedOriginPatterns để cho phép tất cả các domain
+            configuration.setAllowedOriginPatterns(List.of("*")); // Cho phép tất cả các domain
+            configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "*"));
+            configuration.setAllowCredentials(true); // Cho phép gửi cookie/token qua domain
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+            source.registerCorsConfiguration("/**", configuration);
+            return source;
+        }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
