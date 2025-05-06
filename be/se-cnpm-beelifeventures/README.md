@@ -80,7 +80,7 @@ Bạn có thể điều chỉnh các cấu hình trong:
   ports:
     - "8081:8080"  # Thay 8081 bằng cổng khác
   ```
-
+-- tesstttt
 - **Out of memory**: Tăng bộ nhớ cho container trong `docker-compose.yml`:
   ```yaml
   services:
