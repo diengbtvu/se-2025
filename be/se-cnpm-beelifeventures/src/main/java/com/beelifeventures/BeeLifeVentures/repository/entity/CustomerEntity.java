@@ -9,7 +9,7 @@ public class CustomerEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name="user_account_id", nullable=false)
     private UserAccountEntity userAccount;
 

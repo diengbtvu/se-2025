@@ -5,19 +5,13 @@ import com.beelifeventures.BeeLifeVentures.service.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/orders")
 public class Orders {
     @Autowired
     private OrdersService ordersService;
-
-    @CrossOrigin(origins = "*")
-    @GetMapping//GET ORDER
-    public ResponseEntity<List<OrdersDTO>> getAllOrders() {
-        return ResponseEntity.ok(ordersService.findAll());
-    }
+    //get orders
     @CrossOrigin(origins = "*")
     @GetMapping("/{id}")
     public ResponseEntity<OrdersDTO> getOrderById(@PathVariable Long id) {
@@ -27,6 +21,7 @@ public class Orders {
     @CrossOrigin(origins = "*")
     @PostMapping
     public ResponseEntity<OrdersDTO> createOrder(@RequestBody OrdersDTO ordersDTO) {
+        ordersDTO.setId(null); // Đảm bảo tạo mới, không update
         return ResponseEntity.ok(ordersService.save(ordersDTO));
     }
 
@@ -40,7 +35,7 @@ public class Orders {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOrder(@PathVariable Long id) {
         ordersService.delete(id);
-        return ResponseEntity.ok("Huy dat hang thanh cong");
+        return ResponseEntity.ok("Da huy dat hang thanh cong");
     }
 
 
