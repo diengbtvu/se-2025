@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -17,4 +18,5 @@ public class OrdersDTO {
     private String status;
     private BigDecimal total;
     private String note;
+    private List<OrderDetailDTO> orderDetails; // Thêm dòng này
 }
