@@ -1,10 +1,11 @@
 package com.beelifeventures.BeeLifeVentures.api.v1;
 
 import com.beelifeventures.BeeLifeVentures.model.dto.UserAccountDTO;
+import com.beelifeventures.BeeLifeVentures.repository.CustomerRepository;
 import com.beelifeventures.BeeLifeVentures.repository.UserAccountRepository;
+import com.beelifeventures.BeeLifeVentures.repository.entity.CustomerEntity;
 import com.beelifeventures.BeeLifeVentures.repository.entity.UserAccountEntity;
 import com.beelifeventures.BeeLifeVentures.security.JwtUtil;
-import org.apache.catalina.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,6 +29,9 @@ public class Auth {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private CustomerRepository customerRepository;
+
     ModelMapper modelMapper = new ModelMapper();
 
     @PostMapping("/register")
@@ -41,7 +45,17 @@ public class Auth {
             return ResponseEntity.badRequest().body("Username is already taken");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole("USER");
         userAccountRepository.save(user);
+
+        // Thêm đoạn này để lưu CustomerEntity
+        CustomerEntity customer = new CustomerEntity();
+        customer.setUserAccount(user);
+        customer.setName(userAccountDTO.getName());
+        customer.setPhoneNumber(userAccountDTO.getPhoneNumber());
+        customer.setEmail(userAccountDTO.getEmail());
+        customerRepository.save(customer);
+
         return ResponseEntity.ok("User registered successfully");
     }
 
