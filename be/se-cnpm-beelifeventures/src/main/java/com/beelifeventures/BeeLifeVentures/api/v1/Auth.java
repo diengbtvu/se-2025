@@ -1,5 +1,6 @@
 package com.beelifeventures.BeeLifeVentures.api.v1;
 
+import com.beelifeventures.BeeLifeVentures.model.dto.LoginDTO;
 import com.beelifeventures.BeeLifeVentures.model.dto.UserAccountDTO;
 import com.beelifeventures.BeeLifeVentures.repository.CustomerRepository;
 import com.beelifeventures.BeeLifeVentures.repository.UserAccountRepository;
@@ -47,8 +48,7 @@ public class Auth {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("USER");
         userAccountRepository.save(user);
-
-        // Thêm đoạn này để lưu CustomerEntity
+        //
         CustomerEntity customer = new CustomerEntity();
         customer.setUserAccount(user);
         customer.setName(userAccountDTO.getName());
@@ -61,7 +61,7 @@ public class Auth {
 
     @PostMapping("/login")
     @CrossOrigin(origins = "*")
-    public ResponseEntity<?> login(@RequestBody UserAccountDTO user) {
+    public ResponseEntity<?> login(@RequestBody LoginDTO user) {
         Optional<UserAccountEntity> userAccount = userAccountRepository.findByUserName(user.getUserName());
         if (userAccount.isPresent() && passwordEncoder.matches(user.getPassword(), userAccount.get().getPassword())) {
             String token = jwtUtil.generateToken(user.getUserName());
