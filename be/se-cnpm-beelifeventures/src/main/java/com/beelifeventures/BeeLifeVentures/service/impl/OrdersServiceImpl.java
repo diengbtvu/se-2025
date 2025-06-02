@@ -1,11 +1,13 @@
 package com.beelifeventures.BeeLifeVentures.service.impl;
 
 import com.beelifeventures.BeeLifeVentures.model.dto.OrdersDTO;
+import com.beelifeventures.BeeLifeVentures.model.dto.OrderDetailDTO;
 import com.beelifeventures.BeeLifeVentures.repository.OrdersRepository;
 import com.beelifeventures.BeeLifeVentures.repository.ProductRepository;
 import com.beelifeventures.BeeLifeVentures.repository.entity.CustomerEntity;
 import com.beelifeventures.BeeLifeVentures.repository.entity.OrdersEntity;
 import com.beelifeventures.BeeLifeVentures.repository.CustomerRepository;
+import com.beelifeventures.BeeLifeVentures.repository.entity.ProductEntity;
 import com.beelifeventures.BeeLifeVentures.service.OrdersService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -21,6 +23,8 @@ public class OrdersServiceImpl implements OrdersService {
     private OrdersRepository ordersRepository;
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private ProductRepository productRepository;
     @Autowired
     private ModelMapper modelMapper;
 
@@ -50,6 +54,19 @@ public class OrdersServiceImpl implements OrdersService {
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
         OrdersEntity entity = modelMapper.map(ordersDTO, OrdersEntity.class);
         entity.setCustomer(customer);
+
+        // Trừ số lượng tồn kho sản phẩm
+        for (OrderDetailDTO detail : ordersDTO.getOrderDetails()) {
+            ProductEntity product = productRepository.findById(detail.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
+            int newStock = product.getStockQuantity() - detail.getQuantity();
+            if (newStock < 0) {
+                throw new RuntimeException("Sản phẩm " + product.getName() + " không đủ số lượng tồn kho");
+            }
+            product.setStockQuantity(newStock);
+            productRepository.save(product);
+        }
+
         OrdersEntity saved = ordersRepository.save(entity);
         OrdersDTO dto = modelMapper.map(saved, OrdersDTO.class);
         dto.setCustomerId(saved.getCustomer().getId());
