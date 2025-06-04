@@ -1,10 +1,10 @@
 package com.beelifeventures.BeeLifeVentures.service.impl;
 
 import com.beelifeventures.BeeLifeVentures.model.dto.OrdersDTO;
-import com.beelifeventures.BeeLifeVentures.model.dto.OrderDetailDTO;
 import com.beelifeventures.BeeLifeVentures.repository.OrdersRepository;
 import com.beelifeventures.BeeLifeVentures.repository.ProductRepository;
 import com.beelifeventures.BeeLifeVentures.repository.entity.CustomerEntity;
+import com.beelifeventures.BeeLifeVentures.repository.entity.OrderDetailEntity;
 import com.beelifeventures.BeeLifeVentures.repository.entity.OrdersEntity;
 import com.beelifeventures.BeeLifeVentures.repository.CustomerRepository;
 import com.beelifeventures.BeeLifeVentures.repository.entity.ProductEntity;
@@ -24,9 +24,9 @@ public class OrdersServiceImpl implements OrdersService {
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
-    private ProductRepository productRepository;
-    @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Override
     public List<OrdersDTO> findAll() {
@@ -55,16 +55,11 @@ public class OrdersServiceImpl implements OrdersService {
         OrdersEntity entity = modelMapper.map(ordersDTO, OrdersEntity.class);
         entity.setCustomer(customer);
 
-        // Trừ số lượng tồn kho sản phẩm
-        for (OrderDetailDTO detail : ordersDTO.getOrderDetails()) {
-            ProductEntity product = productRepository.findById(detail.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
-            int newStock = product.getStockQuantity() - detail.getQuantity();
-            if (newStock < 0) {
-                throw new RuntimeException("Sản phẩm " + product.getName() + " không đủ số lượng tồn kho");
+        // Xử lý orderDetails đúng cách
+        if (entity.getOrderDetails() != null) {
+            for (OrderDetailEntity detail : entity.getOrderDetails()) {
+                detail.setOrder(entity); // set lại quan hệ cha
             }
-            product.setStockQuantity(newStock);
-            productRepository.save(product);
         }
 
         OrdersEntity saved = ordersRepository.save(entity);
@@ -75,7 +70,22 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Override
     public void delete(Long id) {
-        ordersRepository.deleteById(id);
+        OrdersEntity order = ordersRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+
+        // Hoàn lại số lượng sản phẩm về kho
+        if (order.getOrderDetails() != null) {
+            for (OrderDetailEntity detail : order.getOrderDetails()) {
+                ProductEntity product = detail.getProduct();
+                if (product != null) {
+                    Integer currentStock = product.getStockQuantity() != null ? product.getStockQuantity() : 0;
+                    product.setStockQuantity(currentStock + detail.getQuantity());
+                    productRepository.save(product);
+                }
+            }
+        }
+
+        ordersRepository.delete(order);
     }
 
     @Override

@@ -18,5 +18,5 @@ public class OrdersDTO {
     private String status;
     private BigDecimal total;
     private String note;
-    private List<OrderDetailDTO> orderDetails; // Thêm dòng này
+
 }
