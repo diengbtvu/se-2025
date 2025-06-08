@@ -1,19 +1,28 @@
-version: '3'
+version: '3.8'
 
 services:
   app:
     build: .
     container_name: beelife-app
     ports:
-      - "8090:8080"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - "8080:8080"  # Map port 8080 của container ra port 8080 của host
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - DB_URL=jdbc:mysql://14.225.220.60:3306/beelifeventures
-      - DB_USERNAME=beelife_user
-      - DB_PASSWORD=dfjsdbA3f@a!@#sdb
-    # Bỏ volumes để tránh lỗi ContainerConfig
+      - SPRING_DATASOURCE_URL=jdbc:mysql://14.225.220.60:3306/beelifeventures?allowPublicKeyRetrieval=true&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=beelife_user
+      - SPRING_DATASOURCE_PASSWORD=dfjsdbA3f@a!@#sdb
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - beelife-network
+
+networks:
+  beelife-network:
+    driver: bridge

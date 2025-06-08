@@ -43,7 +43,7 @@ public class Auth {
 
 
         if (userAccountRepository.findByUserName(user.getUserName()).isPresent()) {
-            return ResponseEntity.badRequest().body("Username is already taken");
+            return ResponseEntity.badRequest().body("ten da duoc su dung hay chon ten khac");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("USER");
@@ -56,7 +56,7 @@ public class Auth {
         customer.setEmail(userAccountDTO.getEmail());
         customerRepository.save(customer);
 
-        return ResponseEntity.ok("User registered successfully");
+        return ResponseEntity.ok("tai khoan da duoc tao thanh cong");
     }
 
     @PostMapping("/login")
@@ -67,6 +67,6 @@ public class Auth {
             String token = jwtUtil.generateToken(user.getUserName());
             return ResponseEntity.ok("Bearer: " + token);
         }
-        return ResponseEntity.badRequest().body("Invalid username or password");
+        return ResponseEntity.badRequest().body("nhap sai ten dang nhap hoac mat khau");
     }
 }
