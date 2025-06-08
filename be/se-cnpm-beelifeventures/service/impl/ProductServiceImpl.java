@@ -1,0 +1,1 @@
+ProductDTO bien2 = modelMapper.map(bien, ProductDTO.class);
