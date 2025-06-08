@@ -1,10 +1,12 @@
 package com.beelifeventures.BeeLifeVentures.api.v1;
 
+import com.beelifeventures.BeeLifeVentures.model.dto.LoginDTO;
 import com.beelifeventures.BeeLifeVentures.model.dto.UserAccountDTO;
+import com.beelifeventures.BeeLifeVentures.repository.CustomerRepository;
 import com.beelifeventures.BeeLifeVentures.repository.UserAccountRepository;
+import com.beelifeventures.BeeLifeVentures.repository.entity.CustomerEntity;
 import com.beelifeventures.BeeLifeVentures.repository.entity.UserAccountEntity;
 import com.beelifeventures.BeeLifeVentures.security.JwtUtil;
-import org.apache.catalina.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,6 +30,9 @@ public class Auth {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private CustomerRepository customerRepository;
+
     ModelMapper modelMapper = new ModelMapper();
 
     @PostMapping("/register")
@@ -38,21 +43,30 @@ public class Auth {
 
 
         if (userAccountRepository.findByUserName(user.getUserName()).isPresent()) {
-            return ResponseEntity.badRequest().body("Username is already taken");
+            return ResponseEntity.badRequest().body("ten da duoc su dung hay chon ten khac");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole("USER");
         userAccountRepository.save(user);
-        return ResponseEntity.ok("User registered successfully");
+        //
+        CustomerEntity customer = new CustomerEntity();
+        customer.setUserAccount(user);
+        customer.setName(userAccountDTO.getName());
+        customer.setPhoneNumber(userAccountDTO.getPhoneNumber());
+        customer.setEmail(userAccountDTO.getEmail());
+        customerRepository.save(customer);
+
+        return ResponseEntity.ok("tai khoan da duoc tao thanh cong");
     }
 
     @PostMapping("/login")
     @CrossOrigin(origins = "*")
-    public ResponseEntity<?> login(@RequestBody UserAccountDTO user) {
+    public ResponseEntity<?> login(@RequestBody LoginDTO user) {
         Optional<UserAccountEntity> userAccount = userAccountRepository.findByUserName(user.getUserName());
         if (userAccount.isPresent() && passwordEncoder.matches(user.getPassword(), userAccount.get().getPassword())) {
             String token = jwtUtil.generateToken(user.getUserName());
             return ResponseEntity.ok("Bearer: " + token);
         }
-        return ResponseEntity.badRequest().body("Invalid username or password");
+        return ResponseEntity.badRequest().body("nhap sai ten dang nhap hoac mat khau");
     }
 }
