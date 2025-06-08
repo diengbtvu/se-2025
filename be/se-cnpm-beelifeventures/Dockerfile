@@ -1,22 +1,28 @@
 # Giai đoạn 1: Xây dựng ứng dụng
 FROM maven:3.8-eclipse-temurin-17 AS builder
 WORKDIR /build
-# Copy pom.xml trước để tận dụng cache tốt hơn
+
+# Copy pom.xml
 COPY pom.xml .
-# Tải các dependency (sẽ được lưu vào cache nếu pom.xml không thay đổi)
-RUN mvn dependency:go-offline -B
-# Copy mã nguồn
-COPY src/ ./src/
-# Xây dựng ứng dụng
-RUN mvn package -DskipTests
+# Copy src code
+COPY src ./src
+
+# Package application
+RUN mvn clean package -DskipTests
 
 # Giai đoạn 2: Tạo image runtime
-FROM openjdk:17-oracle
+FROM eclipse-temurin:17-jre-alpine
+
 WORKDIR /app
-# Copy file JAR từ giai đoạn build
+
+# Install curl for healthcheck
+RUN apk add --no-cache curl
+
+# Copy jar from build stage
 COPY --from=builder /build/target/*.jar app.jar
-# Install curl for health checks
-# Mở cổng mà ứng dụng sẽ chạy
+
+# Port
 EXPOSE 8080
-# Lệnh để chạy ứng dụng
+
+# Run application
 ENTRYPOINT ["java", "-jar", "app.jar"]
