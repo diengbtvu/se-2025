@@ -14,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @RestController
@@ -68,5 +71,81 @@ public class Auth {
             return ResponseEntity.ok("Bearer: " + token);
         }
         return ResponseEntity.badRequest().body("nhap sai ten dang nhap hoac mat khau");
+    }    @GetMapping("/profile")
+    @CrossOrigin(origins = "*")
+    @Operation(summary = "Get user profile", security = @SecurityRequirement(name = "Bearer Authentication"))
+    public ResponseEntity<?> getProfile(HttpServletRequest request) {
+        try {
+            // Lấy token từ header Authorization
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.badRequest().body("Token không hợp lệ");
+            }            String token = authHeader.substring(7); // Bỏ "Bearer " prefix
+            
+            // Validate token và extract username
+            if (!jwtUtil.validateToken(token)) {
+                return ResponseEntity.badRequest().body("Token không hợp lệ hoặc đã hết hạn");
+            }
+            
+            String userName = jwtUtil.extractUsername(token);
+            if (userName == null) {
+                return ResponseEntity.badRequest().body("Không thể lấy thông tin user từ token");
+            }
+
+            // Tìm thông tin user
+            Optional<UserAccountEntity> userAccount = userAccountRepository.findByUserName(userName);
+            if (!userAccount.isPresent()) {
+                return ResponseEntity.badRequest().body("Không tìm thấy thông tin người dùng");
+            }
+
+            // Tìm thông tin customer
+            Optional<CustomerEntity> customer = customerRepository.findByUserAccount(userAccount.get());
+            if (!customer.isPresent()) {
+                return ResponseEntity.badRequest().body("Không tìm thấy thông tin khách hàng");
+            }
+
+            // Tạo response chứa thông tin user
+            UserProfileResponse profile = new UserProfileResponse();
+            profile.setId(customer.get().getId());
+            profile.setUserName(userAccount.get().getUserName());
+            profile.setName(customer.get().getName());
+            profile.setEmail(customer.get().getEmail());
+            profile.setPhoneNumber(customer.get().getPhoneNumber());
+            profile.setRole(userAccount.get().getRole());
+
+            return ResponseEntity.ok(profile);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Lỗi khi lấy thông tin người dùng: " + e.getMessage());
+        }
+    }
+
+    // DTO class cho profile response
+    public static class UserProfileResponse {
+        private Long id;
+        private String userName;
+        private String name;
+        private String email;
+        private String phoneNumber;
+        private String role;
+
+        // Getters and Setters
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+
+        public String getUserName() { return userName; }
+        public void setUserName(String userName) { this.userName = userName; }
+
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+
+        public String getPhoneNumber() { return phoneNumber; }
+        public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+
+        public String getRole() { return role; }
+        public void setRole(String role) { this.role = role; }
     }
 }
