@@ -22,6 +22,9 @@ public class CustomerEntity {
     @Column(name="email")
     private String email;
 
+    @Column(name="address")
+    private String address;
+
     // Getters and Setters
     public Long getId() {
         return id;
@@ -61,5 +64,13 @@ public class CustomerEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

@@ -1,5 +1,6 @@
 package com.beelifeventures.BeeLifeVentures.api.v1;
 
+import com.beelifeventures.BeeLifeVentures.model.dto.CustomerUpdateDTO;
 import com.beelifeventures.BeeLifeVentures.model.dto.LoginDTO;
 import com.beelifeventures.BeeLifeVentures.model.dto.UserAccountDTO;
 import com.beelifeventures.BeeLifeVentures.repository.CustomerRepository;
@@ -80,7 +81,9 @@ public class Auth {
             String authHeader = request.getHeader("Authorization");
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return ResponseEntity.badRequest().body("Token không hợp lệ");
-            }            String token = authHeader.substring(7); // Bỏ "Bearer " prefix
+            }
+
+            String token = authHeader.substring(7); // Bỏ "Bearer " prefix
             
             // Validate token và extract username
             if (!jwtUtil.validateToken(token)) {
@@ -111,6 +114,7 @@ public class Auth {
             profile.setName(customer.get().getName());
             profile.setEmail(customer.get().getEmail());
             profile.setPhoneNumber(customer.get().getPhoneNumber());
+            profile.setAddress(customer.get().getAddress());
             profile.setRole(userAccount.get().getRole());
 
             return ResponseEntity.ok(profile);
@@ -120,6 +124,107 @@ public class Auth {
         }
     }
 
+    @PutMapping("/profile")
+    @CrossOrigin(origins = "*")
+    @Operation(summary = "Update user profile", security = @SecurityRequirement(name = "Bearer Authentication"))
+    public ResponseEntity<?> updateProfile(@RequestBody CustomerUpdateDTO updateDTO, HttpServletRequest request) {
+        try {
+            // Lấy token từ header Authorization
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.badRequest().body("Token không hợp lệ");
+            }
+
+            String token = authHeader.substring(7); // Bỏ "Bearer " prefix
+            
+            // Validate token và extract username
+            if (!jwtUtil.validateToken(token)) {
+                return ResponseEntity.badRequest().body("Token không hợp lệ hoặc đã hết hạn");
+            }
+            
+            String userName = jwtUtil.extractUsername(token);
+            if (userName == null) {
+                return ResponseEntity.badRequest().body("Không thể lấy thông tin user từ token");
+            }
+
+            // Tìm thông tin user
+            Optional<UserAccountEntity> userAccount = userAccountRepository.findByUserName(userName);
+            if (!userAccount.isPresent()) {
+                return ResponseEntity.badRequest().body("Không tìm thấy thông tin người dùng");
+            }
+
+            // Tìm thông tin customer
+            Optional<CustomerEntity> customerOpt = customerRepository.findByUserAccount(userAccount.get());
+            if (!customerOpt.isPresent()) {
+                return ResponseEntity.badRequest().body("Không tìm thấy thông tin khách hàng");
+            }
+
+            // Cập nhật thông tin customer
+            CustomerEntity customer = customerOpt.get();
+            if (updateDTO.getName() != null && !updateDTO.getName().trim().isEmpty()) {
+                customer.setName(updateDTO.getName().trim());
+            }
+            if (updateDTO.getPhoneNumber() != null && !updateDTO.getPhoneNumber().trim().isEmpty()) {
+                customer.setPhoneNumber(updateDTO.getPhoneNumber().trim());
+            }
+            if (updateDTO.getEmail() != null && !updateDTO.getEmail().trim().isEmpty()) {
+                customer.setEmail(updateDTO.getEmail().trim());
+            }
+            if (updateDTO.getAddress() != null && !updateDTO.getAddress().trim().isEmpty()) {
+                customer.setAddress(updateDTO.getAddress().trim());
+            }
+
+            // Lưu cập nhật
+            customerRepository.save(customer);
+
+            // Trả về thông tin đã cập nhật
+            UserProfileResponse profile = new UserProfileResponse();
+            profile.setId(customer.getId());
+            profile.setUserName(userAccount.get().getUserName());
+            profile.setName(customer.getName());
+            profile.setEmail(customer.getEmail());
+            profile.setPhoneNumber(customer.getPhoneNumber());
+            profile.setAddress(customer.getAddress());
+            profile.setRole(userAccount.get().getRole());
+
+            return ResponseEntity.ok(profile);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Lỗi khi cập nhật thông tin người dùng: " + e.getMessage());
+        }
+    }
+
+    // Helper method để extract customer từ JWT token
+    private CustomerEntity getCurrentCustomerFromToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Token không hợp lệ");
+        }
+
+        String token = authHeader.substring(7);
+        
+        if (!jwtUtil.validateToken(token)) {
+            throw new RuntimeException("Token không hợp lệ hoặc đã hết hạn");
+        }
+        
+        String userName = jwtUtil.extractUsername(token);
+        if (userName == null) {
+            throw new RuntimeException("Không thể lấy thông tin user từ token");
+        }
+
+        Optional<UserAccountEntity> userAccount = userAccountRepository.findByUserName(userName);
+        if (!userAccount.isPresent()) {
+            throw new RuntimeException("Không tìm thấy thông tin người dùng");
+        }
+
+        Optional<CustomerEntity> customer = customerRepository.findByUserAccount(userAccount.get());
+        if (!customer.isPresent()) {
+            throw new RuntimeException("Không tìm thấy thông tin khách hàng");
+        }
+
+        return customer.get();
+    }
+
     // DTO class cho profile response
     public static class UserProfileResponse {
         private Long id;
@@ -127,6 +232,7 @@ public class Auth {
         private String name;
         private String email;
         private String phoneNumber;
+        private String address;
         private String role;
 
         // Getters and Setters
@@ -144,6 +250,9 @@ public class Auth {
 
         public String getPhoneNumber() { return phoneNumber; }
         public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+
+        public String getAddress() { return address; }
+        public void setAddress(String address) { this.address = address; }
 
         public String getRole() { return role; }
         public void setRole(String role) { this.role = role; }
