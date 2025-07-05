@@ -36,21 +36,21 @@ public class Product {
       productEntity.setStockQuantity(productDTO.getStockQuantity());
       productEntity.setImageUrl(productDTO.getImageUrl());
       productService.save(productDTO);
-      return ResponseEntity.ok("da them san pham thanh cong");
+      return ResponseEntity.ok("Đã thêm sản phẩm thành công");
 
   }
   @DeleteMapping
   @CrossOrigin(origins = "*")
   public ResponseEntity<?> deleteProduct(@RequestBody ProductDTO productDTO) {
     productService.delete(productDTO);
-    return ResponseEntity.ok("da xoa san pham thanh cong");
+    return ResponseEntity.ok("đã xóa sản phẩm thành công");
   }
   @PutMapping
   @CrossOrigin(origins = "*")
   public ResponseEntity<?> putProduct(@RequestBody ProductDTO productDTO){
     ProductDTO tim = productService.findById(productDTO.getId());
     if (tim == null){
-      throw new EntityNotFoundException("ko tim thay");
+      throw new EntityNotFoundException("ko tìm thấy sản phẩm với id: " + productDTO.getId());
     }
     return ResponseEntity.ok(productService.update(productDTO));
 
