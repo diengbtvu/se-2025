@@ -68,8 +68,23 @@ public class Auth {
     public ResponseEntity<?> login(@RequestBody LoginDTO user) {
         Optional<UserAccountEntity> userAccount = userAccountRepository.findByUserName(user.getUserName());
         if (userAccount.isPresent() && passwordEncoder.matches(user.getPassword(), userAccount.get().getPassword())) {
+            // Kiểm tra trạng thái account
+            if (!"ACTIVE".equals(userAccount.get().getStatus())) {
+                return ResponseEntity.badRequest().body("Tài khoản đã bị khóa hoặc không hoạt động");
+            }
+            
+            // Cập nhật last login
+            userAccount.get().setLastLogin(java.time.LocalDateTime.now());
+            userAccountRepository.save(userAccount.get());
+            
             String token = jwtUtil.generateToken(user.getUserName());
-            return ResponseEntity.ok("Bearer: " + token);
+            
+            // Trả về thông tin bổ sung cho admin
+            if ("ADMIN".equals(userAccount.get().getRole())) {
+                return ResponseEntity.ok(new LoginResponse("Bearer: " + token, userAccount.get().getRole(), "Admin login successful"));
+            } else {
+                return ResponseEntity.ok(new LoginResponse("Bearer: " + token, userAccount.get().getRole(), "User login successful"));
+            }
         }
         return ResponseEntity.badRequest().body("nhap sai ten dang nhap hoac mat khau");
     }    @GetMapping("/profile")
@@ -77,15 +92,15 @@ public class Auth {
     @Operation(summary = "Get user profile", security = @SecurityRequirement(name = "Bearer Authentication"))
     public ResponseEntity<?> getProfile(HttpServletRequest request) {
         try {
-            // Lấy token từ header Authorization
+
             String authHeader = request.getHeader("Authorization");
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return ResponseEntity.badRequest().body("Token không hợp lệ");
             }
 
-            String token = authHeader.substring(7); // Bỏ "Bearer " prefix
+            String token = authHeader.substring(7);
             
-            // Validate token và extract username
+
             if (!jwtUtil.validateToken(token)) {
                 return ResponseEntity.badRequest().body("Token không hợp lệ hoặc đã hết hạn");
             }
@@ -95,19 +110,17 @@ public class Auth {
                 return ResponseEntity.badRequest().body("Không thể lấy thông tin user từ token");
             }
 
-            // Tìm thông tin user
             Optional<UserAccountEntity> userAccount = userAccountRepository.findByUserName(userName);
             if (!userAccount.isPresent()) {
                 return ResponseEntity.badRequest().body("Không tìm thấy thông tin người dùng");
             }
 
-            // Tìm thông tin customer
             Optional<CustomerEntity> customer = customerRepository.findByUserAccount(userAccount.get());
             if (!customer.isPresent()) {
                 return ResponseEntity.badRequest().body("Không tìm thấy thông tin khách hàng");
             }
 
-            // Tạo response chứa thông tin user
+           
             UserProfileResponse profile = new UserProfileResponse();
             profile.setId(customer.get().getId());
             profile.setUserName(userAccount.get().getUserName());
@@ -129,19 +142,19 @@ public class Auth {
     @Operation(summary = "Update user profile", security = @SecurityRequirement(name = "Bearer Authentication"))
     public ResponseEntity<?> updateProfile(@RequestBody CustomerUpdateDTO updateDTO, HttpServletRequest request) {
         try {
-            // Lấy token từ header Authorization
+            
             String authHeader = request.getHeader("Authorization");
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return ResponseEntity.badRequest().body("Token không hợp lệ");
             }
 
-            String token = authHeader.substring(7); // Bỏ "Bearer " prefix
+            String token = authHeader.substring(7); 
             
-            // Validate token và extract username
+            //kiemtra token
             if (!jwtUtil.validateToken(token)) {
                 return ResponseEntity.badRequest().body("Token không hợp lệ hoặc đã hết hạn");
             }
-            
+            // Lấy thông tin user từ token
             String userName = jwtUtil.extractUsername(token);
             if (userName == null) {
                 return ResponseEntity.badRequest().body("Không thể lấy thông tin user từ token");
@@ -256,5 +269,28 @@ public class Auth {
 
         public String getRole() { return role; }
         public void setRole(String role) { this.role = role; }
+    }
+
+    // DTO class cho login response
+    public static class LoginResponse {
+        private String token;
+        private String role;
+        private String message;
+
+        public LoginResponse(String token, String role, String message) {
+            this.token = token;
+            this.role = role;
+            this.message = message;
+        }
+
+        // Getters and Setters
+        public String getToken() { return token; }
+        public void setToken(String token) { this.token = token; }
+
+        public String getRole() { return role; }
+        public void setRole(String role) { this.role = role; }
+
+        public String getMessage() { return message; }
+        public void setMessage(String message) { this.message = message; }
     }
 }
