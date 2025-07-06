@@ -1,8 +1,6 @@
 
 package com.beelifeventures.BeeLifeVentures.api.v1;
-/*  
 
-----------------------------tạm đóng chức năng post sản phâmmr------------------
 
 
 
@@ -30,6 +28,9 @@ public class Product {
       List<ProductDTO> productDTOS= productService.findAll();
       return ResponseEntity.ok(productDTOS);
   }
+  /*  
+
+----------------------------tạm đóng chức năng post sản phâmmr------------------
   @PostMapping
   @CrossOrigin(origins = "*")
     public ResponseEntity<?> addProduct(@RequestBody ProductDTO productDTO) {
@@ -62,8 +63,7 @@ public class Product {
     return ResponseEntity.ok(productService.update(productDTO));
 
   }
-
+*/
 
 }
 
-*/
