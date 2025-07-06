@@ -1,13 +1,9 @@
-
 package com.beelifeventures.BeeLifeVentures.api.v1;
-
-
-
-
 
 import com.beelifeventures.BeeLifeVentures.model.dto.ProductDTO;
 import com.beelifeventures.BeeLifeVentures.repository.entity.ProductEntity;
 import com.beelifeventures.BeeLifeVentures.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +20,14 @@ public class Product {
   
   @CrossOrigin(origins = "*")
   @GetMapping
+  @Operation(summary = "Get All Product for user")
     public ResponseEntity<?> getAllProducts() {
       List<ProductDTO> productDTOS= productService.findAll();
       return ResponseEntity.ok(productDTOS);
   }
   /*  
 
-----------------------------tạm đóng chức năng post sản phâmmr------------------
+----------------------------tạm đóng chức năng post sản phâmmr chuyển sang admin de post------------------
   @PostMapping
   @CrossOrigin(origins = "*")
     public ResponseEntity<?> addProduct(@RequestBody ProductDTO productDTO) {
@@ -63,7 +60,24 @@ public class Product {
     return ResponseEntity.ok(productService.update(productDTO));
 
   }
+------------------------------------------------------------------------------------------
 */
+  @CrossOrigin(origins = "*")
+@GetMapping("/{id}")
+@Operation(summary = "Get Product by ID")
+public ResponseEntity<?> getProductById(@PathVariable Long id) {
+    try {
+        ProductDTO productDTO = productService.findById(id);
+        
+        if (productDTO == null) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        return ResponseEntity.ok(productDTO);
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().body("Lỗi khi tìm sản phẩm: " + e.getMessage());
+    }
+}
 
 }
 
