@@ -116,7 +116,6 @@ curl -X GET http://localhost:8080/api/admin/dashboard \
 - 🛒 Tổng số đơn hàng
 - 💰 Doanh thu tổng
 - 📦 Số sản phẩm đang bán
-- 👥 Lượt truy cập hiện tại (24h)
 
 ### Quản lý người dùng
 
