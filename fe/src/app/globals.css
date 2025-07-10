@@ -1,0 +1,196 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: 255, 255, 255;
+  --primary: 101, 189, 96;
+  --secondary: 78, 69, 64;
+  --border: 229, 231, 235;
+}
+
+@layer base {
+  * {
+    @apply border-gray-200;
+  }
+
+  html {
+    @apply scroll-smooth antialiased;
+  }
+  
+  body {
+    @apply text-gray-800 bg-white;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Focus styles */
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2;
+  }
+
+  /* Scrollbar styles */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary/50 rounded-full hover:bg-primary/70;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-secondary font-bold tracking-tight;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl lg:text-4xl;
+  }
+
+  h4 {
+    @apply text-xl md:text-2xl;
+  }
+
+  p {
+    @apply text-base md:text-lg text-gray-600 leading-relaxed;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-full transition-colors duration-200 font-medium;
+  }
+  
+  .btn-secondary {
+    @apply inline-flex items-center justify-center bg-secondary hover:bg-secondary/90 text-white px-6 py-2.5 rounded-full transition-colors duration-200 font-medium;
+  }
+
+  .container {
+    @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+  }
+
+  .section {
+    @apply py-12 sm:py-16 md:py-24;
+  }
+
+  .heading-1 {
+    @apply text-3xl sm:text-4xl md:text-5xl font-bold text-secondary tracking-tight;
+  }
+
+  .heading-2 {
+    @apply text-2xl sm:text-3xl md:text-4xl font-bold text-secondary tracking-tight;
+  }
+
+  .paragraph {
+    @apply text-base sm:text-lg text-gray-600 leading-relaxed;
+  }
+
+  .link {
+    @apply text-primary hover:text-primary/80 transition-colors duration-200 underline-offset-4 hover:underline;
+  }
+
+  /* Navigation styles */
+  .nav-link {
+    @apply text-secondary hover:text-primary transition-colors duration-200;
+  }
+
+  .nav-link.active {
+    @apply text-primary;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-white rounded-2xl border border-gray-100;
+  }
+
+  .card-hover {
+    @apply hover:border-primary/20 transition-colors duration-200;
+  }
+
+  /* Form styles */
+  .form-input {
+    @apply w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+  }
+
+  /* Mobile menu animation */
+  .mobile-menu-enter {
+    @apply transition-opacity duration-200;
+    opacity: 0;
+  }
+
+  .mobile-menu-enter-active {
+    opacity: 1;
+  }
+
+  .mobile-menu-exit {
+    opacity: 1;
+  }
+
+  .mobile-menu-exit-active {
+    @apply transition-opacity duration-200;
+    opacity: 0;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Animation utilities */
+  .animate-once {
+    animation-iteration-count: 1;
+  }
+
+  .animate-twice {
+    animation-iteration-count: 2;
+  }
+
+  .animate-thrice {
+    animation-iteration-count: 3;
+  }
+
+  /* Hover effect utilities */
+  .hover-lift {
+    @apply transition-colors duration-200 hover:text-primary;
+  }
+
+  .hover-grow {
+    @apply transition-colors duration-200 hover:bg-gray-50;
+  }
+
+  /* Glass effect */
+  .glass {
+    @apply bg-white/90;
+  }
+
+  /* Grid layouts */
+  .grid-auto-fit {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+
+  .grid-auto-fill {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6;
+  }
+}
