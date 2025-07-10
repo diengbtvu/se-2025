@@ -1,0 +1,304 @@
+Hướng dẫn API: Xác thực & Quản lý Tài khoản (auth)
+Tài liệu này mô tả các API liên quan đến quy trình đăng ký, đăng nhập và quản lý thông tin cá nhân của người dùng.
+Thông tin chung quan trọng
+Base URL: http://localhost:8080
+Cơ chế xác thực: API sử dụng JWT (JSON Web Token). Sau khi đăng nhập thành công, bạn sẽ nhận được một token. Đối với các yêu cầu cần xác thực (như lấy/cập nhật profile), bạn phải gửi token này trong Header của request.
+Header Name: Authorization
+Header Value: Bearer <your_token_here> (Ví dụ: Bearer eyJhbGciOiJIUzUxMiJ9...)
+1. Đăng ký tài khoản mới
+Mục đích: Cho phép người dùng mới tạo một tài khoản trên hệ thống.
+Endpoint: POST /api/auth/register
+URL đầy đủ: https://.../api/auth/register
+Yêu cầu (Request):
+Headers: Không yêu cầu Authorization.
+Body (Payload): Gửi một đối tượng JSON chứa thông tin đăng ký.
+Generated json
+{
+  "userName": "nguyenvana",
+  "password": "matkhauantoan123",
+  "name": "Nguyễn Văn A",
+  "phoneNumber": "0987654321",
+  "email": "nguyenvana@example.com"
+}
+Use code with caution.
+Json
+Phản hồi (Response):
+Thành công (200 OK): Server sẽ trả về một tin nhắn xác nhận đăng ký thành công.
+Thất bại (4xx): Có thể xảy ra nếu userName hoặc email đã tồn tại trong hệ thống.
+Gợi ý cho Front-end:
+Sau khi đăng ký thành công, hiển thị thông báo và chuyển hướng người dùng đến trang đăng nhập.
+2. Đăng nhập
+Mục đích: Xác thực thông tin đăng nhập của người dùng và nhận về một token để sử dụng cho các phiên làm việc tiếp theo.
+Endpoint: POST /api/auth/login
+URL đầy đủ: https://.../api/auth/login
+Yêu cầu (Request):
+Headers: Không yêu cầu Authorization.
+Body (Payload):
+Generated json
+{
+  "userName": "hoangff",
+  "password": "123123"
+}
+Use code with caution.
+Json
+Phản hồi (Response):
+Thành công (200 OK): Server trả về một đối tượng JSON chứa token và thông tin vai trò.
+Generated json
+{
+  "token": "Bearer: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJob2FuZ2ZmIiwiaWF0IjoxNzUxODU4ODE2LCJleHAiOjE3NTE5NDUyMTZ9.tziAn4A2p30Wt8EUQuUKuOJ6pkP_bjKLWwQY9zPiXVEDbsLaQCucvTmgiQWiyMEThY0suPPZ19OoIvDbkLqUCQ",
+  "role": "USER",
+  "message": "User login successful"
+}
+Use code with caution.
+Json
+Thất bại (4xx): Sai userName hoặc password.
+Gợi ý cho Front-end:
+CỰC KỲ QUAN TRỌNG: Lưu lại giá trị của token (phần chuỗi dài sau Bearer:) vào localStorage hoặc sessionStorage của trình duyệt.
+Lưu vai trò (role) để phân quyền trên giao diện nếu cần.
+Chuyển hướng người dùng đến trang chính hoặc trang dashboard sau khi đăng nhập thành công.
+3. Lấy thông tin cá nhân (Profile)
+Mục đích: Lấy thông tin chi tiết của người dùng đang đăng nhập.
+Endpoint: GET /api/auth/profile
+URL đầy đủ: https://.../api/auth/profile
+Yêu cầu (Request):
+Headers: Bắt buộc phải có Authorization: Bearer <token>.
+Body: Không có.
+Phản hồi (Response):
+Thành công (200 OK): Server trả về một đối tượng JSON chứa thông tin chi tiết của người dùng.
+Generated json
+{
+  "id": 16,
+  "userName": "hoangff",
+  "name": "Hoang",
+  "email": "nguyenleduydhtv@gmail.com",
+  "phoneNumber": "0353265654",
+  "address": null,
+  "role": "USER"
+}
+Use code with caution.
+Json
+Gợi ý cho Front-end:
+Sử dụng API này để hiển thị thông tin trên trang "Tài khoản của tôi".
+Dữ liệu này cũng được dùng để điền sẵn vào form cập nhật thông tin ở mục 4.
+4. Cập nhật thông tin cá nhân (Profile)
+Mục đích: Cho phép người dùng tự cập nhật các thông tin cá nhân như tên, số điện thoại, email, địa chỉ.
+Endpoint: PUT /api/auth/profile
+URL đầy đủ: https://.../api/auth/profile
+Yêu cầu (Request):
+Headers: Bắt buộc phải có Authorization: Bearer <token>.
+Body (Payload): Gửi một đối tượng JSON chứa các trường thông tin cần cập nhật. Không cần gửi tất cả các trường, chỉ cần gửi những trường người dùng muốn thay đổi.
+Generated json
+{
+  "name": "Lê Duy Hoàng",
+  "phoneNumber": "0353265654",
+  "email": "nguyenleduydhtv@gmail.com",
+  "address": "123 Đường ABC, Quận 1, TP.HCM"
+}
+Use code with caution.
+Json
+Phản hồi (Response):
+Thành công (200 OK): Server sẽ trả về một đối tượng JSON chứa thông tin người dùng sau khi đã cập nhật, hoặc một tin nhắn thành công.
+Thất bại (4xx): Lỗi xác thực dữ liệu (ví dụ: email không đúng định dạng).
+Gợi ý cho Front-end:
+Tạo một form cho phép người dùng chỉnh sửa thông tin.
+Sau khi nhận được phản hồi thành công, hãy cập nhật lại thông tin người dùng đang hiển thị trên giao diện mà không cần tải lại trang.
+Hiển thị một thông báo "Cập nhật thành công!".
+Luồng 2: Mua sắm và Giỏ hàng (Shopping & Cart)
+Bước 2.1: Xem danh sách tất cả sản phẩm
+Mục đích: Hiển thị tất cả sản phẩm cho người dùng lựa chọn.
+Endpoint: GET /api/product
+URL: https://.../api/product
+Yêu cầu (Request):
+Headers: không cần Authorization.
+Phản hồi (Response):
+Thành công (200 OK): Trả về một mảng (array) các đối tượng sản phẩm.
+Generated json
+[
+  {
+    "id": 2,
+    "name": "Tổ ong thông minh BeeLife",
+    "description": "Tổ ong thông minh với công nghệ IoT...",
+    "price": 2500000,
+    "productType": "Tổ ong",
+    "stockQuantity": 8,
+    "imageUrl": "/images/BeeHome Closed (5) (1)-1.jpg"
+  },
+  // ... các sản phẩm khác
+]
+Use code with caution.
+Json
+Bước 2.2: Thêm sản phẩm vào giỏ hàng
+Mục đích: Khi người dùng nhấn nút "Thêm vào giỏ hàng".
+Endpoint: POST /api/cart/add
+URL: https://.../api/cart/add
+Yêu cầu (Request):
+Headers: Bắt buộc phải có Authorization: Bearer <token>.
+Body (Payload):
+Generated json
+{
+  "productId": 2, // ID của sản phẩm muốn thêm
+  "quantity": 1   // Số lượng muốn thêm
+}
+Use code with caution.
+Json
+Phản hồi (Response):
+Thành công (200 OK): Server sẽ trả về thông tin giỏ hàng đã được cập nhật.
+Thất bại (400 Bad Request): Có thể do productId không tồn tại ("Product not found").
+Bước 2.3: Xem giỏ hàng
+Mục đích: Hiển thị trang giỏ hàng với các sản phẩm người dùng đã chọn.
+Endpoint: GET /api/cart
+URL: https://.../api/cart
+Yêu cầu (Request):
+Headers: Bắt buộc phải có Authorization: Bearer <token>.
+Phản hồi (Response):
+Thành công (200 OK): Trả về một đối tượng giỏ hàng, bao gồm danh sách các sản phẩm trong đó.
+Generated json
+{
+  "id": 3,
+  "customerId": 15,
+  "customerName": "a",
+  "cartItems": [
+    // mảng các sản phẩm trong giỏ hàng sẽ nằm ở đây
+  ],
+  "totalAmount": 0,
+  "totalItems": 0
+}
+Use code with caution.
+Json
+Bước 2.4: Cập nhật số lượng sản phẩm trong giỏ
+Mục đích: Khi người dùng thay đổi số lượng của một sản phẩm ngay trên trang giỏ hàng.
+Endpoint: PUT /api/cart/update
+URL: https://.../api/cart/update
+Yêu cầu (Request):
+Headers: Bắt buộc phải có Authorization: Bearer <token>.
+Body (Payload):
+Generated json
+{
+  "productId": 2,  // ID của sản phẩm cần cập nhật
+  "quantity": 3    // Số lượng mới
+}
+Use code with caution.
+Json
+Phản hồi (Response):
+Thành công (200 OK): Giỏ hàng được cập nhật.
+Thất bại (400 Bad Request): Lỗi "Cart not found" hoặc "Product not in cart".
+Bước 2.5: Xóa sản phẩm khỏi giỏ hàng
+Mục đích: Khi người dùng nhấn nút xóa một sản phẩm.
+Endpoint: DELETE /api/cart/remove/{productId}
+URL: https://.../api/cart/remove/2 (với 2 là ID của sản phẩm cần xóa).
+Yêu cầu (Request):
+Headers: Bắt buộc phải có Authorization: Bearer <token>.
+Parameters: productId được truyền trên URL.
+Phản hồi (Response):
+Thành công (200 OK): Sản phẩm được xóa khỏi giỏ.
+Thất bại (400 Bad Request): Lỗi "Cart item not found".
+Luồng 3: Đặt hàng (Checkout)
+Bước 3.1: Đặt hàng từ giỏ hàng
+Mục đích: Chuyển các sản phẩm đã chọn trong giỏ hàng thành một đơn hàng chính thức.
+Endpoint: POST /api/cart/checkout
+URL: https://.../api/cart/checkout
+Yêu cầu (Request):
+Headers: Bắt buộc phải có Authorization: Bearer <token>.
+Body (Payload):
+Generated json
+{
+  "status": "pending", // Trạng thái ban đầu của đơn hàng, ví dụ: 'pending', 'processing'
+  "note": "Giao hàng vào giờ hành chính.", // Ghi chú của khách hàng
+  "selectedCartItemIds": [ 5, 8, 9 ] // Mảng chứa ID của các **cartItem** mà người dùng muốn đặt hàng. **Lưu ý**: Đây là ID của các mục trong giỏ hàng, không phải ID sản phẩm. Bạn cần lấy thông tin này từ API `GET /api/cart`.
+}
+Use code with caution.
+Json
+Phản hồi (Response):
+Thành công (200 OK): Trả về thông tin đơn hàng vừa được tạo.
+Thất bại (400 Bad Request): Lỗi "Cart not found" hoặc các lỗi liên quan đến sản phẩm. Sau khi đặt hàng thành công, giỏ hàng (hoặc các item đã chọn) sẽ được xóa.
+Luồng 4: Quản lý Đơn hàng Cá nhân (Trang "Lịch sử mua hàng")
+Luồng này mô tả các bước để người dùng xem lại các đơn hàng họ đã đặt và thực hiện các thao tác trên đó, chẳng hạn như xem chi tiết hoặc hủy đơn. Các API trong luồng này đều yêu cầu xác thực.
+Bước 4.1: Lấy và Hiển thị Lịch sử Đơn hàng
+Đây là bước đầu tiên khi người dùng truy cập vào trang "Đơn hàng của tôi" hoặc "Lịch sử mua hàng".
+Mục đích: Lấy danh sách tóm tắt tất cả các đơn hàng mà người dùng đã đặt để hiển thị trên giao diện.
+Endpoint: GET /api/orders
+URL đầy đủ: https://.../api/orders
+Yêu cầu (Request):
+Method: GET
+Headers: Bắt buộc phải có Authorization: Bearer <token_cua_user>.
+Phản hồi (Response):
+Thành công (200 OK): Server sẽ trả về một mảng (array) các đối tượng đơn hàng. Mỗi đối tượng chứa thông tin tóm tắt cần thiết để hiển thị trong danh sách.
+Ví dụ Response Body:
+Generated json
+[
+  {
+    "id": 101,
+    "orderDate": "2025-07-06T10:30:00",
+    "totalAmount": 5000000,
+    "status": "pending", // Ví dụ: pending, processing, shipped, delivered, cancelled
+    "itemCount": 2
+  },
+  {
+    "id": 95,
+    "orderDate": "2025-06-20T15:00:00",
+    "totalAmount": 2500000,
+    "status": "delivered",
+    "itemCount": 1
+  }
+]
+Use code with caution.
+Json
+Nếu chưa có đơn hàng: Server trả về một mảng rỗng [].
+Gợi ý cho Lập trình viên Front-end:
+Sử dụng dữ liệu này để render một danh sách các đơn hàng.
+Mỗi mục trong danh sách nên hiển thị: Mã đơn hàng (id), Ngày đặt (orderDate), Tổng tiền (totalAmount), và Trạng thái (status).
+Mỗi mục nên là một liên kết hoặc có một nút "Xem chi tiết" để điều hướng người dùng đến Bước 4.2.
+Bước 4.2: Xem Chi tiết một Đơn hàng cụ thể
+Hành động này xảy ra khi người dùng nhấp vào một đơn hàng từ danh sách ở trên.
+Mục đích: Lấy toàn bộ thông tin chi tiết của một đơn hàng duy nhất để hiển thị trên trang "Chi tiết đơn hàng".
+Endpoint: GET /api/orders/{id}
+URL đầy đủ (Ví dụ): https://.../api/orders/101 (với 101 là id của đơn hàng được chọn).
+Yêu cầu (Request):
+Method: GET
+Headers: Bắt buộc phải có Authorization: Bearer <token_cua_user>.
+Parameters: id của đơn hàng được truyền trực tiếp trên URL.
+Phản hồi (Response):
+Thành công (200 OK): Server trả về một đối tượng duy nhất chứa toàn bộ chi tiết của đơn hàng đó.
+Ví dụ Response Body:
+Generated json
+{
+  "id": 101,
+  "orderDate": "2025-07-06T10:30:00",
+  "status": "pending",
+  "customerName": "Nguyễn Văn A",
+  "customerAddress": "123 Đường ABC, Phường X, Quận Y, TP. Z",
+  "note": "Giao hàng vào giờ hành chính.",
+  "totalAmount": 5000000,
+  "orderItems": [
+    {
+      "productId": 2,
+      "productName": "Tổ ong thông minh BeeLife",
+      "quantity": 2,
+      "price": 2500000,
+      "imageUrl": "/images/BeeHome.jpg"
+    }
+  ]
+}
+Use code with caution.
+Json
+Thất bại (4xx): Server có thể trả về lỗi 400 Bad Request hoặc 403 Forbidden với thông báo như "Không có quyền xem đơn hàng này" nếu đơn hàng không thuộc về người dùng đang đăng nhập.
+Gợi ý cho Lập trình viên Front-end:
+Hiển thị tất cả các thông tin chi tiết: thông tin người nhận, địa chỉ, ghi chú, danh sách sản phẩm (kèm hình ảnh, tên, số lượng, giá), và tổng tiền.
+Dựa vào trạng thái (status) của đơn hàng, bạn có thể hiển thị các nút hành động tương ứng, ví dụ: nút "Hủy đơn hàng" (xem Bước 4.3).
+Bước 4.3: Hủy Đơn hàng
+Mục đích: Cho phép người dùng tự hủy đơn hàng của mình, thường chỉ áp dụng cho các đơn hàng đang ở trạng thái "Chờ xử lý" (pending).
+Endpoint: DELETE /api/orders/{id}
+URL đầy đủ (Ví dụ): https://.../api/orders/101
+Yêu cầu (Request):
+Method: DELETE
+Headers: Bắt buộc phải có Authorization: Bearer <token_cua_user>.
+Parameters: id của đơn hàng cần hủy.
+Phản hồi (Response):
+Thành công (200 OK): Server trả về một tin nhắn xác nhận, ví dụ: "Đơn hàng đã được hủy thành công.".
+Thất bại (4xx): Server trả về lỗi nếu:
+Người dùng không có quyền ("Không có quyền xóa đơn hàng này").
+Đơn hàng không còn ở trạng thái cho phép hủy (ví dụ, đã được giao cho đơn vị vận chuyển).
+Gợi ý cho Lập trình viên Front-end:
+Trên trang chi tiết đơn hàng (Bước 4.2), hiển thị nút "Hủy đơn hàng" chỉ khi order.status === 'pending'.
+Khi người dùng nhấn nút, nên có một hộp thoại xác nhận (confirm dialog) để tránh thao tác nhầm.
+Sau khi gọi API thành công, cập nhật lại trạng thái đơn hàng trên giao diện thành "cancelled" hoặc điều hướng người dùng về lại trang danh sách đơn hàng đã được cập nhật.

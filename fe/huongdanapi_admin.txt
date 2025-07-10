@@ -1,0 +1,180 @@
+Hướng dẫn sử dụng API để Xây dựng Trang Quản trị (Admin Page)
+I. Tổng quan
+Tài liệu này mô tả các API cần thiết để xây dựng một trang quản trị. Hệ thống bao gồm hai phần chính:
+Xác thực (Authentication): Dành cho tất cả người dùng (bao gồm cả admin) để đăng nhập, đăng ký và quản lý thông tin cá nhân.
+Quản trị (Admin): Các endpoint đặc biệt chỉ dành cho người dùng có vai trò ADMIN để quản lý người dùng, sản phẩm, đơn hàng và xem báo cáo.
+Base URL: http://localhost:8080 (Giả định dựa trên ví dụ)
+II. Luồng Xác thực (Authentication Flow) - Quan trọng nhất!
+Đây là bước bắt buộc phải làm đúng để có thể truy cập các API của admin.
+Đăng nhập (Login):
+Người dùng admin gửi yêu cầu POST đến /api/auth/login với userName và password.
+API sẽ trả về một token (ví dụ: Bearer: eyJ...) và role (ví dụ: "ADMIN").
+Lưu trữ Token:
+Sau khi đăng nhập thành công, bạn phải lưu trữ token này ở phía client (ví dụ: trong localStorage, sessionStorage hoặc cookies).
+Gửi Token trong các Yêu cầu sau:
+Đối với TẤT CẢ các yêu cầu tiếp theo đến các endpoint được bảo vệ (toàn bộ phần /api/admin/... và /api/auth/profile), bạn phải đính kèm token này vào Header của yêu cầu.
+Định dạng của header là: Authorization: <giá trị token nhận được>
+Ví dụ: Authorization: Bearer: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc1MTkxNjE0NiwiZXhwIjoxNzUyMDAyNTQ2fQ.kyaSWQUY2ZTwZMXuBjExUBI-a4NWSDIkJrGOs8oDoBAXwK6m0yOjLcpqt0HBUiG4s_JrHBi8FwNvv-OLCFMhXg
+Nếu không gửi token hoặc token không hợp lệ, các yêu cầu tới /api/admin/* sẽ bị từ chối.
+III. Danh sách các API
+1. Nhóm API Xác thực (/api/auth)
+Dùng để đăng nhập, đăng ký và quản lý thông tin cá nhân.
+Đăng nhập
+Method: POST
+Endpoint: /api/auth/login
+Mô tả: Đăng nhập vào hệ thống.
+Request Body:
+Generated json
+{
+  "userName": "string",
+  "password": "string"
+}
+Use code with caution.
+Json
+Response (Thành công - 200 OK): Trả về token và vai trò người dùng.
+Generated json
+{
+  "token": "Bearer: ...",
+  "role": "ADMIN", // hoặc "USER"
+  "message": "Admin login successful"
+}
+Use code with caution.
+Json
+Đăng ký tài khoản mới
+Method: POST
+Endpoint: /api/auth/register
+Request Body:
+Generated json
+{
+  "userName": "string",
+  "password": "string",
+  "name": "string",
+  "phoneNumber": "string",
+  "email": "string"
+}
+Use code with caution.
+Json
+Lấy thông tin cá nhân
+Method: GET
+Endpoint: /api/auth/profile
+Yêu cầu xác thực: Bắt buộc (Phải gửi Authorization header).
+Mô tả: Lấy thông tin của người dùng đang đăng nhập.
+Cập nhật thông tin cá nhân
+Method: PUT
+Endpoint: /api/auth/profile
+Yêu cầu xác thực: Bắt buộc.
+Mô tả: Cập nhật thông tin của người dùng đang đăng nhập.
+Request Body:
+Generated json
+{
+  "name": "string",
+  "phoneNumber": "string",
+  "email": "string",
+  "address": "string"
+}
+Use code with caution.
+Json
+2. Nhóm API Quản trị (/api/admin)
+LƯU Ý: Tất cả các endpoint dưới đây đều BẮT BUỘC phải có Authorization header với token của người dùng có role là ADMIN.
+Lấy danh sách người dùng (phân trang)
+Method: GET
+Endpoint: /api/admin/users/paginated
+Query Parameters:
+page: Số trang (mặc định: 0)
+size: Số lượng mục trên mỗi trang (mặc định: 10)
+Tìm kiếm người dùng
+Method: GET
+Endpoint: /api/admin/users/search
+Query Parameters:
+keyword: Từ khóa tìm kiếm (bắt buộc).
+Lấy thông tin chi tiết một người dùng
+Method: GET
+Endpoint: /api/admin/users/{userId}
+Path Parameter: userId (ID của người dùng).
+Xóa người dùng
+Method: DELETE
+Endpoint: /api/admin/users/{userId}
+Path Parameter: userId (ID của người dùng).
+Lấy danh sách sản phẩm (phân trang)
+Method: GET
+Endpoint: /api/admin/products
+Query Parameters: page, size.
+Tạo sản phẩm mới
+Method: POST
+Endpoint: /api/admin/products
+Request Body:
+Generated json
+{
+  "name": "string",
+  "description": "string",
+  "price": 0,
+  "productType": "string",
+  "manufactureDate": "YYYY-MM-DD",
+  "expiryDate": "YYYY-MM-DD",
+  "stockQuantity": 0,
+  "imageUrl": "string"
+}
+Use code with caution.
+Json
+Cập nhật sản phẩm
+Method: PUT
+Endpoint: /api/admin/products/{productId}
+Path Parameter: productId (ID của sản phẩm).
+Request Body: (Tương tự như tạo mới).
+Xóa sản phẩm
+Method: DELETE
+Endpoint: /api/admin/products/{productId}
+Path Parameter: productId.
+Lấy danh sách đơn hàng (phân trang)
+Method: GET
+Endpoint: /api/admin/orders
+Query Parameters: page, size.
+Lấy chi tiết đơn hàng
+Method: GET
+Endpoint: /api/admin/orders/{orderId}
+Path Parameter: orderId.
+Lấy đơn hàng theo trạng thái
+Method: GET
+Endpoint: /api/admin/orders/status/{status}
+Path Parameter: status (ví dụ: "PENDING", "CONFIRMED", "SHIPPING", "DELIVERED").
+Cập nhật trạng thái đơn hàng
+Method: PUT
+Endpoint: /api/admin/orders/{orderId}/status
+Path Parameter: orderId.
+Request Body:
+Generated json
+{
+  "status": "string", // Trạng thái mới
+  "note": "string"
+}
+Use code with caution.
+Json
+Xóa đơn hàng
+Method: DELETE
+Endpoint: /api/admin/orders/{orderId}
+Path Parameter: orderId.
+Lấy dữ liệu cho Dashboard
+Method: GET
+Endpoint: /api/admin/dashboard
+Mô tả: Lấy các số liệu tổng quan (ví dụ: tổng số người dùng, tổng sản phẩm, đơn hàng mới...).
+Lấy số người dùng đang hoạt động
+Method: GET
+Endpoint: /api/admin/active-users
+Lấy báo cáo doanh thu
+Method: GET
+Endpoint: /api/admin/revenue/report
+Query Parameters:
+fromDate: Ngày bắt đầu, định dạng YYYY-MM-DD (bắt buộc).
+toDate: Ngày kết thúc, định dạng YYYY-MM-DD (bắt buộc).
+IV. Luồng làm việc gợi ý để xây dựng trang Admin
+Trang Đăng nhập: Tạo form đăng nhập, gọi API POST /api/auth/login. Nếu thành công và role là "ADMIN", lưu token và chuyển hướng đến trang dashboard admin.
+Layout chính của Admin:
+Tạo một layout chung (có sidebar, header, footer).
+Khi layout được tải, kiểm tra xem có token trong localStorage không. Nếu không có, chuyển hướng về trang đăng nhập.
+Trong header, có thể hiển thị thông tin admin (gọi GET /api/auth/profile) và nút Đăng xuất (xóa token và chuyển về trang đăng nhập).
+Tạo các trang chức năng:
+Trang Dashboard: Gọi GET /api/admin/dashboard, GET /api/admin/active-users để hiển thị các thẻ thông tin.
+Trang Quản lý người dùng: Gọi GET /api/admin/users/paginated để hiển thị danh sách. Thêm các chức năng tìm kiếm, xóa (DELETE /api/admin/users/{userId}).
+Trang Quản lý sản phẩm: Gọi GET /api/admin/products để hiển thị danh sách. Tạo form để thêm mới (POST /api/admin/products) và chỉnh sửa (PUT /api/admin/products/{productId}).
+Trang Quản lý đơn hàng: Tương tự, dùng các API quản lý đơn hàng để hiển thị danh sách, xem chi tiết và cập nhật trạng thái.
+Tạo một API service/client: Tạo một module/file tập trung việc gọi API. Module này sẽ tự động thêm Authorization header vào mọi request, giúp code sạch sẽ và dễ quản lý.
