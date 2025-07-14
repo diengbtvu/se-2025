@@ -153,3 +153,28 @@ next-env.d.ts
 
 # Misc
 *.pem
+
+# Scripts and temp files
+run-*.sh
+docker-*.sh
+*.txt.backup
+
+# Documentation temp files
+*.md.backup
+
+# API documentation files (move to backend/docs)
+huongdanapi_*.txt
+
+# Project requirement files (move to root/docs)
+**/Yeu\ cau\ Do\ an\ *.txt
+
+# Auto-generated Docker files
+docker-compose.*.yml
+
+# Build artifacts
+build-info.json
+
+# Test artifacts
+.jest/
+coverage/
+test-results/
