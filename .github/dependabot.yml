@@ -1,0 +1,77 @@
+version: 2
+updates:
+  # Frontend dependencies (npm)
+  - package-ecosystem: "npm"
+    directory: "/fe"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "@beelife-team"
+    assignees:
+      - "@beelife-team"
+    commit-message:
+      prefix: "fe"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "frontend"
+    ignore:
+      - dependency-name: "eslint*"
+        update-types: ["version-update:semver-major"]
+
+  # Backend dependencies (Maven)
+  - package-ecosystem: "maven"
+    directory: "/be/se-cnpm-beelifeventures"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "10:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "@beelife-team"
+    assignees:
+      - "@beelife-team"
+    commit-message:
+      prefix: "be"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "backend"
+
+  # Docker dependencies
+  - package-ecosystem: "docker"
+    directory: "/fe"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "docker"
+
+  - package-ecosystem: "docker"
+    directory: "/be/se-cnpm-beelifeventures"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "docker"
+
+  # GitHub Actions dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions" 

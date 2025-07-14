@@ -1,0 +1,77 @@
+name: Dependabot Auto-Merge
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    
+    steps:
+    - name: Check if PR is from Dependabot
+      id: dependabot-check
+      run: |
+        if [[ "${{ github.actor }}" == "dependabot[bot]" ]]; then
+          echo "is_dependabot=true" >> $GITHUB_OUTPUT
+        else
+          echo "is_dependabot=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Fetch Dependabot metadata
+      if: steps.dependabot-check.outputs.is_dependabot == 'true'
+      id: metadata
+      uses: dependabot/fetch-metadata@v1
+      with:
+        github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+    - name: Auto-approve minor and patch updates
+      if: |
+        steps.dependabot-check.outputs.is_dependabot == 'true' && 
+        (steps.metadata.outputs.update-type == 'version-update:semver-minor' || 
+         steps.metadata.outputs.update-type == 'version-update:semver-patch')
+      run: |
+        gh pr review --approve "$PR_URL"
+        echo "✅ Auto-approved ${{ steps.metadata.outputs.update-type }} update"
+      env:
+        PR_URL: ${{ github.event.pull_request.html_url }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Auto-merge after successful checks
+      if: |
+        steps.dependabot-check.outputs.is_dependabot == 'true' && 
+        (steps.metadata.outputs.update-type == 'version-update:semver-minor' || 
+         steps.metadata.outputs.update-type == 'version-update:semver-patch')
+      run: |
+        # Wait for status checks to complete
+        sleep 60
+        
+        # Auto-merge if all checks pass
+        gh pr merge --auto --squash "$PR_URL"
+        echo "🚀 Auto-merge enabled for ${{ steps.metadata.outputs.update-type }} update"
+      env:
+        PR_URL: ${{ github.event.pull_request.html_url }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Comment on major updates
+      if: |
+        steps.dependabot-check.outputs.is_dependabot == 'true' && 
+        steps.metadata.outputs.update-type == 'version-update:semver-major'
+      run: |
+        gh pr comment "$PR_URL" --body "⚠️ **Major version update detected!** 
+        
+        This PR contains a major version update that requires manual review:
+        - Package: ${{ steps.metadata.outputs.dependency-names }}
+        - Update type: ${{ steps.metadata.outputs.update-type }}
+        
+        Please review the changelog and test thoroughly before merging.
+        
+        /cc @beelife-team"
+      env:
+        PR_URL: ${{ github.event.pull_request.html_url }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
