@@ -20,6 +20,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/orders")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class Orders {
     @Autowired
     private OrdersService ordersService;
@@ -33,42 +34,42 @@ public class Orders {
     @Autowired
     private CustomerRepository customerRepository;
     
-    // GET tất cả orders của user hiện tại (yêu cầu đăng nhập)
+    // GET all orders of current account, requires login
     @CrossOrigin(origins = "*")
     @GetMapping
     @Operation(summary = "Get all orders of current user", security = @SecurityRequirement(name = "Bearer Authentication"))
     public ResponseEntity<?> getAllMyOrders(HttpServletRequest request) {
         try {
-            // Lấy thông tin customer từ JWT token
+
             CustomerEntity customer = getCurrentCustomerFromToken(request);
-            
-            // Lấy tất cả orders của customer
+
+            // Get all orders of customer
             List<OrderDetailResponseDTO> orders = ordersService.findAllOrdersByCustomer(customer.getId());
             return ResponseEntity.ok(orders);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Lỗi khi lấy danh sách đơn hàng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error getting order list: " + e.getMessage());
         }
     }
 
-    // GET order theo ID (giữ lại cho backward compatibility)
+    // GET order by ID (kept for backward compatibility)
     @CrossOrigin(origins = "*")
     @GetMapping("/{id}")
     @Operation(summary = "Get order by ID", security = @SecurityRequirement(name = "Bearer Authentication"))
     public ResponseEntity<?> getOrderById(@PathVariable Long id, HttpServletRequest request) {
         try {
-            // Lấy thông tin customer từ JWT token để kiểm tra quyền
+            // Get customer info from JWT token to check permission
             CustomerEntity customer = getCurrentCustomerFromToken(request);
-            
+
             OrdersDTO order = ordersService.findById(id);
-            
-            // Kiểm tra quyền sở hữu đơn hàng
+
+            // Check order ownership
             if (!order.getCustomerId().equals(customer.getId())) {
-                return ResponseEntity.badRequest().body("Không có quyền xem đơn hàng này");
+                return ResponseEntity.badRequest().body("You do not have permission to view this order");
             }
-            
+
             return ResponseEntity.ok(order);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Lỗi khi lấy thông tin đơn hàng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error getting order info: " + e.getMessage());
         }
     }
 
@@ -77,14 +78,14 @@ public class Orders {
     @Operation(summary = "Create order", security = @SecurityRequirement(name = "Bearer Authentication"))
     public ResponseEntity<?> createOrder(@RequestBody OrdersCreateDTO ordersCreateDTO, HttpServletRequest request) {
         try {
-            // Lấy thông tin customer từ JWT token
+            // Get customer info from JWT token
             CustomerEntity customer = getCurrentCustomerFromToken(request);
-            
-            // Tạo order với customerId từ token
+
+            // Create order with customerId from token
             OrdersDTO savedOrder = ordersService.saveWithCustomer(ordersCreateDTO, customer.getId());
             return ResponseEntity.ok(savedOrder);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Lỗi khi tạo đơn hàng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error creating order: " + e.getMessage());
         }
     }
 
@@ -93,14 +94,14 @@ public class Orders {
     @Operation(summary = "Update order", security = @SecurityRequirement(name = "Bearer Authentication"))
     public ResponseEntity<?> updateOrder(@RequestBody OrderUpdateDTO orderUpdateDTO, HttpServletRequest request) {
         try {
-            // Lấy thông tin customer từ JWT token
+            // Get customer info from JWT token
             CustomerEntity customer = getCurrentCustomerFromToken(request);
-            
-            // Cập nhật order với quyền customer
+
+            // Update order with customer permission
             OrdersDTO updatedOrder = ordersService.updateOrderByCustomer(orderUpdateDTO, customer.getId());
             return ResponseEntity.ok(updatedOrder);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Lỗi khi cập nhật đơn hàng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error updating order: " + e.getMessage());
         }
     }
 
@@ -109,52 +110,57 @@ public class Orders {
     @Operation(summary = "Delete order", security = @SecurityRequirement(name = "Bearer Authentication"))
     public ResponseEntity<?> deleteOrder(@PathVariable Long id, HttpServletRequest request) {
         try {
-            // Lấy thông tin customer từ JWT token để kiểm tra quyền
+            // Get customer info from  JWT token to check permission
             CustomerEntity customer = getCurrentCustomerFromToken(request);
-            
-            // Kiểm tra quyền sở hữu trước khi xóa
+
+            // Check ownership before deleting
             OrdersDTO order = ordersService.findById(id);
             if (!order.getCustomerId().equals(customer.getId())) {
-                return ResponseEntity.badRequest().body("Không có quyền xóa đơn hàng này");
+                return ResponseEntity.badRequest().body("You do not have permission to delete this order");
             }
-            
+
             ordersService.delete(id);
-            return ResponseEntity.ok("Đã xóa đơn hàng thành công");
+            return ResponseEntity.ok("Order deleted successfully");
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi xóa đơn hàng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error deleting order: " + e.getMessage());
         }
     }
 
-    // Helper method để extract customer từ JWT token
+    // Helper method to extract customer from JWT token
     private CustomerEntity getCurrentCustomerFromToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new RuntimeException("Token không hợp lệ");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) 
+        {
+            throw new RuntimeException("Invalid token");
         }
 
         String token = authHeader.substring(7);
-        
-        if (!jwtUtil.validateToken(token)) {
-            throw new RuntimeException("Token không hợp lệ hoặc đã hết hạn");
+
+        if (!jwtUtil.validateToken(token)) 
+        {
+            throw new RuntimeException("Token is invalid or expired");
         }
-        
+
         String userName = jwtUtil.extractUsername(token);
-        if (userName == null) {
-            throw new RuntimeException("Không thể lấy thông tin user từ token");
+        if (userName == null) 
+        {
+            throw new RuntimeException("Cannot extract user info from token");
         }
 
         Optional<UserAccountEntity> userAccount = userAccountRepository.findByUserName(userName);
-        if (!userAccount.isPresent()) {
-            throw new RuntimeException("Không tìm thấy thông tin người dùng");
+        if (!userAccount.isPresent()) 
+        {
+            throw new RuntimeException("User info not found");
         }
 
         Optional<CustomerEntity> customer = customerRepository.findByUserAccount(userAccount.get());
         if (!customer.isPresent()) {
-            throw new RuntimeException("Không tìm thấy thông tin khách hàng");
+            throw new RuntimeException("Customer info not found");
         }
 
+     
         return customer.get();
     }
 

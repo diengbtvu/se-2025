@@ -10,14 +10,14 @@ import java.util.List;
 public interface AdminService {
     
     // User Management
-    List<AdminUserManagementDTO> getAllUsers(); // Lấy tất cả users không phân trang
-    Page<AdminUserManagementDTO> getAllUsersWithPagination(Pageable pageable); // Lấy users có phân trang
+    List<AdminUserManagementDTO> getAllUsers(); 
+    Page<AdminUserManagementDTO> getAllUsersWithPagination(Pageable pageable);
     AdminUserManagementDTO getUserById(Long userId);
     void deleteUser(Long userId);
     List<AdminUserManagementDTO> searchUsers(String keyword);
     
     // Website Analytics
-    Long getCurrentActiveUsers(); // Lấy số lượng người dùng đang truy cập
+    Long getCurrentActiveUsers();
     
     // Product Management (Admin có full quyền)
     ProductDTO createProduct(ProductDTO productDTO);

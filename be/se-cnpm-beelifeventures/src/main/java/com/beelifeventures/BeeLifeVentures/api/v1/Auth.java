@@ -22,6 +22,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class Auth {
 
     @Autowired
@@ -45,14 +46,15 @@ public class Auth {
         UserAccountEntity user = new UserAccountEntity();
         modelMapper.map(userAccountDTO, user);
 
-
+        // Check if username is already used
         if (userAccountRepository.findByUserName(user.getUserName()).isPresent()) {
-            return ResponseEntity.badRequest().body("ten da duoc su dung hay chon ten khac");
+            return ResponseEntity.badRequest().body("Username is already taken, please choose another one.");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("USER");
         userAccountRepository.save(user);
-        //
+
+        // Create customer profile
         CustomerEntity customer = new CustomerEntity();
         customer.setUserAccount(user);
         customer.setName(userAccountDTO.getName());
@@ -60,7 +62,7 @@ public class Auth {
         customer.setEmail(userAccountDTO.getEmail());
         customerRepository.save(customer);
 
-        return ResponseEntity.ok("tai khoan da duoc tao thanh cong");
+        return ResponseEntity.ok("Account created successfully.");
     }
 
     @PostMapping("/login")
@@ -68,59 +70,58 @@ public class Auth {
     public ResponseEntity<?> login(@RequestBody LoginDTO user) {
         Optional<UserAccountEntity> userAccount = userAccountRepository.findByUserName(user.getUserName());
         if (userAccount.isPresent() && passwordEncoder.matches(user.getPassword(), userAccount.get().getPassword())) {
-            // Kiểm tra trạng thái account
+            // Check account status
             if (!"ACTIVE".equals(userAccount.get().getStatus())) {
-                return ResponseEntity.badRequest().body("Tài khoản đã bị khóa hoặc không hoạt động");
+                return ResponseEntity.badRequest().body("Account is locked or inactive.");
             }
             
-            // Cập nhật last login
+            // Update last login
             userAccount.get().setLastLogin(java.time.LocalDateTime.now());
             userAccountRepository.save(userAccount.get());
             
             String token = jwtUtil.generateToken(user.getUserName());
             
-            // Trả về thông tin bổ sung cho admin
+            // Return extra info for admin
             if ("ADMIN".equals(userAccount.get().getRole())) {
                 return ResponseEntity.ok(new LoginResponse("Bearer: " + token, userAccount.get().getRole(), "Admin login successful"));
             } else {
                 return ResponseEntity.ok(new LoginResponse("Bearer: " + token, userAccount.get().getRole(), "User login successful"));
             }
         }
-        return ResponseEntity.badRequest().body("nhap sai ten dang nhap hoac mat khau");
-    }    @GetMapping("/profile")
+        return ResponseEntity.badRequest().body("Incorrect username or password.");
+    }
+
+    @GetMapping("/profile")
     @CrossOrigin(origins = "*")
     @Operation(summary = "Get user profile", security = @SecurityRequirement(name = "Bearer Authentication"))
     public ResponseEntity<?> getProfile(HttpServletRequest request) {
         try {
-
             String authHeader = request.getHeader("Authorization");
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return ResponseEntity.badRequest().body("Token không hợp lệ");
+                return ResponseEntity.badRequest().body("Invalid token.");
             }
 
             String token = authHeader.substring(7);
-            
 
             if (!jwtUtil.validateToken(token)) {
-                return ResponseEntity.badRequest().body("Token không hợp lệ hoặc đã hết hạn");
+                return ResponseEntity.badRequest().body("Token is invalid or expired.");
             }
             
             String userName = jwtUtil.extractUsername(token);
             if (userName == null) {
-                return ResponseEntity.badRequest().body("Không thể lấy thông tin user từ token");
+                return ResponseEntity.badRequest().body("Cannot extract user info from token.");
             }
 
             Optional<UserAccountEntity> userAccount = userAccountRepository.findByUserName(userName);
             if (!userAccount.isPresent()) {
-                return ResponseEntity.badRequest().body("Không tìm thấy thông tin người dùng");
+                return ResponseEntity.badRequest().body("User not found.");
             }
 
             Optional<CustomerEntity> customer = customerRepository.findByUserAccount(userAccount.get());
             if (!customer.isPresent()) {
-                return ResponseEntity.badRequest().body("Không tìm thấy thông tin khách hàng");
+                return ResponseEntity.badRequest().body("Customer info not found.");
             }
 
-           
             UserProfileResponse profile = new UserProfileResponse();
             profile.setId(customer.get().getId());
             profile.setUserName(userAccount.get().getUserName());
@@ -133,7 +134,7 @@ public class Auth {
             return ResponseEntity.ok(profile);
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi lấy thông tin người dùng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error getting user info: " + e.getMessage());
         }
     }
 
@@ -142,37 +143,36 @@ public class Auth {
     @Operation(summary = "Update user profile", security = @SecurityRequirement(name = "Bearer Authentication"))
     public ResponseEntity<?> updateProfile(@RequestBody CustomerUpdateDTO updateDTO, HttpServletRequest request) {
         try {
-            
             String authHeader = request.getHeader("Authorization");
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return ResponseEntity.badRequest().body("Token không hợp lệ");
+                return ResponseEntity.badRequest().body("Invalid token.");
             }
 
             String token = authHeader.substring(7); 
             
-            //kiemtra token
+            // Check token
             if (!jwtUtil.validateToken(token)) {
-                return ResponseEntity.badRequest().body("Token không hợp lệ hoặc đã hết hạn");
+                return ResponseEntity.badRequest().body("Token is invalid or expired.");
             }
-            // Lấy thông tin user từ token
+            // Get user info from token
             String userName = jwtUtil.extractUsername(token);
             if (userName == null) {
-                return ResponseEntity.badRequest().body("Không thể lấy thông tin user từ token");
+                return ResponseEntity.badRequest().body("Cannot extract user info from token.");
             }
 
-            // Tìm thông tin user
+            // Find user info
             Optional<UserAccountEntity> userAccount = userAccountRepository.findByUserName(userName);
             if (!userAccount.isPresent()) {
-                return ResponseEntity.badRequest().body("Không tìm thấy thông tin người dùng");
+                return ResponseEntity.badRequest().body("User not found.");
             }
 
-            // Tìm thông tin customer
+            // Find customer info
             Optional<CustomerEntity> customerOpt = customerRepository.findByUserAccount(userAccount.get());
             if (!customerOpt.isPresent()) {
-                return ResponseEntity.badRequest().body("Không tìm thấy thông tin khách hàng");
+                return ResponseEntity.badRequest().body("Customer info not found.");
             }
 
-            // Cập nhật thông tin customer
+            // Update customer info
             CustomerEntity customer = customerOpt.get();
             if (updateDTO.getName() != null && !updateDTO.getName().trim().isEmpty()) {
                 customer.setName(updateDTO.getName().trim());
@@ -187,10 +187,10 @@ public class Auth {
                 customer.setAddress(updateDTO.getAddress().trim());
             }
 
-            // Lưu cập nhật
+            // Save updates
             customerRepository.save(customer);
 
-            // Trả về thông tin đã cập nhật
+            // Return updated info
             UserProfileResponse profile = new UserProfileResponse();
             profile.setId(customer.getId());
             profile.setUserName(userAccount.get().getUserName());
@@ -203,36 +203,36 @@ public class Auth {
             return ResponseEntity.ok(profile);
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi cập nhật thông tin người dùng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error updating user info: " + e.getMessage());
         }
     }
 
-    // Helper method để extract customer từ JWT token
+    // Helper method to extract customer from JWT token
     private CustomerEntity getCurrentCustomerFromToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new RuntimeException("Token không hợp lệ");
+            throw new RuntimeException("Invalid token.");
         }
 
         String token = authHeader.substring(7);
         
         if (!jwtUtil.validateToken(token)) {
-            throw new RuntimeException("Token không hợp lệ hoặc đã hết hạn");
+            throw new RuntimeException("Token is invalid or expired.");
         }
         
         String userName = jwtUtil.extractUsername(token);
         if (userName == null) {
-            throw new RuntimeException("Không thể lấy thông tin user từ token");
+            throw new RuntimeException("Cannot extract user info from token.");
         }
 
         Optional<UserAccountEntity> userAccount = userAccountRepository.findByUserName(userName);
         if (!userAccount.isPresent()) {
-            throw new RuntimeException("Không tìm thấy thông tin người dùng");
+            throw new RuntimeException("User not found.");
         }
 
         Optional<CustomerEntity> customer = customerRepository.findByUserAccount(userAccount.get());
         if (!customer.isPresent()) {
-            throw new RuntimeException("Không tìm thấy thông tin khách hàng");
+            throw new RuntimeException("Customer info not found.");
         }
 
         return customer.get();
