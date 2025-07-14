@@ -11,11 +11,14 @@
 ## 🚀 Quick Start
 
 ```bash
-# Khởi chạy toàn bộ hệ thống
-docker-compose up --build
+# Build nhanh cho local development (KHUYẾN NGHỊ)
+./quick-build.sh fast
 
-# Hoặc sử dụng script tiện lợi
-./run-app.sh start
+# Hoặc build tiêu chuẩn
+./quick-build.sh start
+
+# Hoặc sử dụng docker-compose trực tiếp
+docker-compose up --build
 ```
 
 ## 🌐 Truy cập ứng dụng
@@ -37,6 +40,16 @@ se-2025/
 
 ## 🔧 Lệnh quản lý
 
+### 🚀 Local Development (Nhanh)
+```bash
+./quick-build.sh fast   # Build nhanh với cache
+./quick-build.sh dev    # Development mode với hot reload
+./quick-build.sh stop   # Dừng containers
+./quick-build.sh clean  # Dọn dẹp hoàn toàn
+./quick-build.sh logs   # Xem logs
+```
+
+### 🏗️ Production/CI (Đầy đủ)
 ```bash
 ./run-app.sh start      # Khởi chạy production
 ./run-app.sh dev        # Khởi chạy development

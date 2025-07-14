@@ -1,0 +1,67 @@
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# CI/CD
+.github/
+
+# Documentation
+*.md
+docs/
+README*
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~.nib
+
+# Test reports
+test-output/
+test-results/
+
+# Spring Boot
+application-local.properties
+
+# Misc
+*.tgz
+*.tar.gz 
