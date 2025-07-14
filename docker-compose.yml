@@ -15,11 +15,11 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_JPA_SHOW_SQL=true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/product"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
+      start_period: 60s
     restart: unless-stopped
     networks:
       - beelife-network
@@ -45,10 +45,11 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
+      start_period: 60s  # Increased for better reliability
     restart: unless-stopped
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy  # Wait for backend health check
     networks:
       - beelife-network
 
