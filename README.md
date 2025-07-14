@@ -1,73 +1,114 @@
-# 🐝 BeeLifeVentures
+# BeeLife Ventures 🐝
 
-> Hệ thống quản lý trang trại ong thông minh với công nghệ IoT
+Hệ thống quản lý sản phẩm và đơn hàng cho BeeLife Ventures.
 
-[![Docker](https://img.shields.io/badge/Docker-Ready-blue)](./DOCKER_README.md)
-[![Frontend](https://img.shields.io/badge/Frontend-Next.js-green)](./fe/)
-[![Backend](https://img.shields.io/badge/Backend-Spring%20Boot-brightgreen)](./be/)
-
-## 🚀 Quick Start
-
-```bash
-# Khởi chạy toàn bộ hệ thống
-docker-compose up --build
-
-# Hoặc sử dụng script tiện lợi
-./run-app.sh start
-```
-
-## 🌐 Truy cập ứng dụng
-
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8080
-- **API Docs**: Xem [docs/PROJECT_OVERVIEW.md](docs/PROJECT_OVERVIEW.md)
-
-## 📁 Cấu trúc dự án
-
-```
-se-2025/
-├── 📱 fe/                    # Frontend (Next.js + TypeScript)
-├── ⚙️  be/                    # Backend (Spring Boot + Java)
-├── 📚 docs/                  # Tài liệu dự án
-├── 🐳 docker-compose.yml     # Docker orchestration
-└── 🎯 run-app.sh             # Script quản lý ứng dụng
-```
-
-## 🔧 Lệnh quản lý
-
-```bash
-./run-app.sh start      # Khởi chạy production
-./run-app.sh dev        # Khởi chạy development
-./run-app.sh stop       # Dừng ứng dụng
-./run-app.sh logs       # Xem logs
-./run-app.sh status     # Kiểm tra trạng thái
-./run-app.sh help       # Xem tất cả lệnh
-```
-
-## 📖 Tài liệu
-
-- 📋 **[Tổng quan dự án](docs/PROJECT_OVERVIEW.md)** - Thông tin chi tiết về dự án
-- 🐳 **[Hướng dẫn Docker](DOCKER_README.md)** - Setup và troubleshooting Docker
-- 🔧 **[Backend Guide](be/se-cnpm-beelifeventures/README.md)** - API documentation
-- 🎨 **[Frontend Guide](fe/README.md)** - Component & development guide
-
-## 🛠️ Công nghệ
-
-| Component | Technology | Version |
-|-----------|------------|---------|
-| Frontend | Next.js + TypeScript | 15.x |
-| Backend | Spring Boot + Java | 3.x / 17 |
-| Database | MySQL | 8.0 |
-| Container | Docker + Compose | Latest |
-
-## 🎯 Tính năng chính
+## 🚀 Tính Năng
 
 - ✅ **Quản lý sản phẩm** - CRUD operations
-- ✅ **Giỏ hàng thông minh** - Real-time updates
+- ✅ **Giỏ hàng thông minh** - Real-time updates  
 - ✅ **Xác thực JWT** - Secure authentication
 - ✅ **Dashboard admin** - Analytics & management
 - ✅ **Responsive design** - Mobile-friendly UI
 - ✅ **Docker deployment** - Easy containerization
+- ✅ **Auto Deploy** - Tự động deploy khi push main
+
+## 🛠️ Tech Stack
+
+### Frontend
+- Next.js 14
+- TypeScript
+- Tailwind CSS
+- Three.js (3D models)
+
+### Backend  
+- Spring Boot 3
+- Java 17
+- MySQL
+- JWT Authentication
+
+### DevOps
+- Docker & Docker Compose
+- GitHub Actions CI/CD
+- Auto deploy to VPS
+
+## 📦 Cài Đặt
+
+### 1. Clone repository
+
+```bash
+git clone https://github.com/diengbtvu/se-2025.git
+cd se-2025
+```
+
+### 2. Chạy với Docker
+
+```bash
+# Build và start tất cả services
+docker-compose up -d --build
+
+# Hoặc dùng script helper
+./run-app.sh start
+```
+
+### 3. Truy cập
+
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8080
+- MySQL: localhost:3306
+
+## 🚀 CI/CD & Auto Deploy
+
+Dự án có hệ thống CI/CD đơn giản với auto deploy:
+
+- **Build & Test**: Frontend (npm) và Backend (Maven)  
+- **Docker Validation**: Kiểm tra Docker builds
+- **Auto Deploy**: Tự động deploy lên VPS khi push main
+- **Fast & Reliable**: 5-10 phút với auto rollback
+
+### Setup Auto Deploy
+
+1. **Thêm GitHub Secrets**:
+   - `VPS_HOST`: IP của VPS
+   - `VPS_USERNAME`: SSH username  
+   - `VPS_SSH_KEY`: Private SSH key
+
+2. **Push lên main** để trigger auto deploy
+
+Chi tiết: 
+- [CI Simple Guide](docs/CI_SIMPLE.md)
+- [VPS Deploy Guide](docs/VPS_DEPLOY_GUIDE.md)
+
+## 📁 Cấu Trúc
+
+```
+se-2025/
+├── fe/                 # Frontend Next.js
+├── be/                 # Backend Spring Boot  
+├── docker-compose.yml  # Docker orchestration
+├── .github/           # GitHub Actions workflows
+└── docs/              # Documentation
+```
+
+## 🧪 Development
+
+### Frontend
+```bash
+cd fe
+npm install
+npm run dev
+```
+
+### Backend
+```bash
+cd be/se-cnpm-beelifeventures
+mvn spring-boot:run
+```
+
+## 📝 Scripts
+
+- `./run-app.sh` - Quản lý Docker containers
+- `./quick-build.sh` - Fast local builds
+- `./scripts/deploy-vps.sh` - Deploy script cho VPS
 
 ## 👥 Đóng góp
 
@@ -79,9 +120,8 @@ se-2025/
 
 ## 📝 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License.
 
 ---
 
-**Made with ❤️ by BeeLife Team**  
-📧 Contact: [team@beelife.vn](mailto:team@beelife.vn) 
+**Made with ❤️ by BeeLife Team** 

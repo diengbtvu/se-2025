@@ -59,8 +59,9 @@ be/**/*.class
 be/**/*.jar
 be/**/*.war
 
-# Git
+# Git (but keep GitHub Actions)
 .git/
+!.github/
 
 # Documentation drafts
 docs/drafts/
