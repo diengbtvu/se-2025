@@ -2,6 +2,8 @@
 
 > Hệ thống quản lý trang trại ong thông minh với công nghệ IoT
 
+[![CI/CD](https://github.com/beelife-team/se-2025/actions/workflows/docker-ci.yml/badge.svg)](https://github.com/beelife-team/se-2025/actions/workflows/docker-ci.yml)
+[![Quick Build](https://github.com/beelife-team/se-2025/actions/workflows/quick-build.yml/badge.svg)](https://github.com/beelife-team/se-2025/actions/workflows/quick-build.yml)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue)](./DOCKER_README.md)
 [![Frontend](https://img.shields.io/badge/Frontend-Next.js-green)](./fe/)
 [![Backend](https://img.shields.io/badge/Backend-Spring%20Boot-brightgreen)](./be/)
@@ -47,6 +49,7 @@ se-2025/
 ## 📖 Tài liệu
 
 - 📋 **[Tổng quan dự án](docs/PROJECT_OVERVIEW.md)** - Thông tin chi tiết về dự án
+- 🚀 **[CI/CD Guide](docs/CI_CD_GUIDE.md)** - Hướng dẫn GitHub Actions và deployment
 - 🐳 **[Hướng dẫn Docker](DOCKER_README.md)** - Setup và troubleshooting Docker
 - 🔧 **[Backend Guide](be/se-cnpm-beelifeventures/README.md)** - API documentation
 - 🎨 **[Frontend Guide](fe/README.md)** - Component & development guide

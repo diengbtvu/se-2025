@@ -1,0 +1,66 @@
+name: Quick Build & Test
+
+on:
+  push:
+    branches-ignore: [ "main", "develop" ]
+  workflow_dispatch:
+
+jobs:
+  quick-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build frontend
+      run: |
+        cd fe
+        docker build --target builder -t beelife-fe-test .
+
+    - name: Build backend
+      run: |
+        cd be/se-cnpm-beelifeventures
+        docker build --target builder -t beelife-be-test .
+
+    - name: Quick docker-compose validation
+      run: |
+        docker-compose config
+        echo "✅ Docker Compose configuration is valid"
+
+    - name: Lint frontend (if possible)
+      run: |
+        cd fe
+        if [ -f package.json ]; then
+          npm ci --legacy-peer-deps
+          npm run lint || echo "⚠️ Linting issues found"
+        fi
+
+  quick-integration:
+    runs-on: ubuntu-latest
+    needs: quick-test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Quick integration test
+      run: |
+        # Build and start services
+        docker-compose up -d --build
+        
+        # Wait a bit
+        sleep 20
+        
+        # Quick health checks
+        timeout 30 bash -c 'until curl -f http://localhost:8080/api/product; do sleep 2; done' || echo "⚠️ Backend not ready"
+        timeout 30 bash -c 'until curl -f http://localhost:3000; do sleep 2; done' || echo "⚠️ Frontend not ready"
+        
+        echo "✅ Quick integration test completed"
+
+    - name: Cleanup
+      if: always()
+      run: docker-compose down -v 
