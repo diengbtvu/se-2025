@@ -199,7 +199,7 @@ export default function Orders() {
                             Đơn hàng #{order.id}
                           </h3>
                           <p className="text-sm text-gray-500">
-                            Ngày đặt: {new Date(order.orderDate).toLocaleDateString('vi-VN')}
+                            Ngày đặt: {order.orderDate ? new Date(order.orderDate).toLocaleDateString('vi-VN') : 'Không có thông tin'}
                           </p>
                           {order.itemCount && (
                             <p className="text-sm text-gray-500">
