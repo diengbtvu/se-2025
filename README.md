@@ -85,6 +85,16 @@ se-2025/
 - ✅ **Responsive design** - Mobile-friendly UI
 - ✅ **Docker deployment** - Easy containerization
 
+## 🚀 CI/CD
+
+Dự án có hệ thống CI/CD đơn giản và ổn định:
+
+- **Build & Test**: Frontend (npm) và Backend (Maven)  
+- **Docker Validation**: Kiểm tra Docker builds
+- **Fast & Reliable**: 5-10 phút, ít lỗi hơn
+
+Chi tiết: [CI Simple Guide](docs/CI_SIMPLE.md)
+
 ## 👥 Đóng góp
 
 1. Fork dự án
