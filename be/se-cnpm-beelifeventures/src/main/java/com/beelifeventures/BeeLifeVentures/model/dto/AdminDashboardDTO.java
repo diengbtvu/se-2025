@@ -10,7 +10,8 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminDashboardDTO {
+public class AdminDashboardDTO 
+{
     // Overview stats
     private Integer totalUsers;
     private Integer totalProducts;

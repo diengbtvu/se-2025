@@ -18,6 +18,6 @@ public class CartDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<CartItemDTO> cartItems;
-    private BigDecimal totalAmount; // Tổng tiền của giỏ hàng
-    private Integer totalItems; // Tổng số lượng sản phẩm
+    private BigDecimal totalAmount; 
+    private Integer totalItems;
 }

@@ -25,6 +25,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/admin")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class Admin {
 
     @Autowired
@@ -39,7 +40,7 @@ public class Admin {
     // ========================= DASHBOARD =========================
     
     /**
-     * Lấy thông tin dashboard tổng quan
+     * Get overview dashboard information
      */
     @CrossOrigin(origins = "*")
     @GetMapping("/dashboard")
@@ -53,14 +54,14 @@ public class Admin {
             AdminDashboardDTO dashboard = adminService.getDashboardData();
             return ResponseEntity.ok(dashboard);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi lấy thông tin dashboard: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error getting dashboard info: " + e.getMessage());
         }
     }
 
     // ========================= USER MANAGEMENT =========================
 
     /**
-     * Lấy danh sách tất cả người dùng (không phân trang)
+     * Get all users (not paginated)
      */
     @CrossOrigin(origins = "*")
     @GetMapping("/users")
@@ -74,16 +75,16 @@ public class Admin {
             List<AdminUserManagementDTO> users = adminService.getAllUsers();
             return ResponseEntity.ok(users);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi lấy danh sách người dùng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error getting user list: " + e.getMessage());
         }
     }
 
     /**
-     * Lấy danh sách người tùy chọn
+     * Get paginated user list
      */
     @CrossOrigin(origins = "*")
     @GetMapping("/users/paginated")
-    @Operation(summary = "Get all users with to .", security = @SecurityRequirement(name = "Bearer Authentication"))
+    @Operation(summary = "Get all users with pagination", security = @SecurityRequirement(name = "Bearer Authentication"))
     public ResponseEntity<?> getAllUsersWithPagination(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -97,12 +98,12 @@ public class Admin {
             Page<AdminUserManagementDTO> users = adminService.getAllUsersWithPagination(pageable);
             return ResponseEntity.ok(users);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi lấy danh sách người dùng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error getting user list: " + e.getMessage());
         }
     }
 
     /**
-     * Lấy thông tin user theo ID
+     * Get user info by ID
      */
     @CrossOrigin(origins = "*")
     @GetMapping("/users/{userId}")
@@ -116,12 +117,12 @@ public class Admin {
             AdminUserManagementDTO user = adminService.getUserById(userId);
             return ResponseEntity.ok(user);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi lấy thông tin người dùng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error getting user info: " + e.getMessage());
         }
     }
 
     /**
-     * Xóa người dùng
+     * Delete user
      */
     @CrossOrigin(origins = "*")
     @DeleteMapping("/users/{userId}")
@@ -133,14 +134,14 @@ public class Admin {
             }
             
             adminService.deleteUser(userId);
-            return ResponseEntity.ok("Xóa người dùng thành công");
+            return ResponseEntity.ok("User deleted successfully");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi xóa người dùng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error deleting user: " + e.getMessage());
         }
     }
 
     /**
-     * Tìm kiếm người dùng
+     * Search users
      */
     @CrossOrigin(origins = "*")
     @GetMapping("/users/search")
@@ -154,14 +155,14 @@ public class Admin {
             List<AdminUserManagementDTO> users = adminService.searchUsers(keyword);
             return ResponseEntity.ok(users);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi tìm kiếm người dùng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error searching users: " + e.getMessage());
         }
     }
 
-    // ========================= Quản lý sản phẩm =========================
+    // ========================= PRODUCT MANAGEMENT =========================
 
     /**
-     * Tạo sản phẩm mới
+     * Create new product
      */
     @CrossOrigin(origins = "*")
     @PostMapping("/products")
@@ -175,12 +176,12 @@ public class Admin {
             ProductDTO createdProduct = adminService.createProduct(productDTO);
             return ResponseEntity.ok(createdProduct);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi tạo sản phẩm: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error creating product: " + e.getMessage());
         }
     }
 
     /**
-     * Cập nhật sản phẩm
+     * Update product
      */
     @CrossOrigin(origins = "*")
     @PutMapping("/products/{productId}")
@@ -197,12 +198,12 @@ public class Admin {
             ProductDTO updatedProduct = adminService.updateProduct(productId, productDTO);
             return ResponseEntity.ok(updatedProduct);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi cập nhật sản phẩm: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error updating product: " + e.getMessage());
         }
     }
 
     /**
-     * Xóa sản phẩm
+     * Delete product
      */
     @CrossOrigin(origins = "*")
     @DeleteMapping("/products/{productId}")
@@ -214,14 +215,14 @@ public class Admin {
             }
             
             adminService.deleteProduct(productId);
-            return ResponseEntity.ok("Xóa sản phẩm thành công");
+            return ResponseEntity.ok("Product deleted successfully");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi xóa sản phẩm: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error deleting product: " + e.getMessage());
         }
     }
 
     /**
-     * Lấy tất cả sản phẩm cho admin
+     * Get all products for admin
      */
     @CrossOrigin(origins = "*")
     @GetMapping("/products")
@@ -236,24 +237,24 @@ public class Admin {
             }
             
             if (page == -1) {
-                // Lấy tất cả không phân trang
+                // Get all products without pagination
                 List<ProductDTO> products = adminService.getAllProductsForAdmin();
                 return ResponseEntity.ok(products);
             } else {
-                // Phân trang
+                // Paginated
                 Pageable pageable = PageRequest.of(page, size);
                 Page<ProductDTO> products = adminService.getProductsWithPagination(pageable);
                 return ResponseEntity.ok(products);
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi lấy danh sách sản phẩm: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error getting product list: " + e.getMessage());
         }
     }
 
-    // ========================= Quản Lý orders =========================
+    // ========================= ORDER MANAGEMENT =========================
 
     /**
-     * Lấy tất cả đơn hàng
+     * Get all orders
      */
     @CrossOrigin(origins = "*")
     @GetMapping("/orders")
@@ -271,12 +272,12 @@ public class Admin {
             Page<OrderDetailResponseDTO> orders = adminService.getAllOrders(pageable);
             return ResponseEntity.ok(orders);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi lấy danh sách đơn hàng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error getting order list: " + e.getMessage());
         }
     }
 
     /**
-     * Lấy đơn hàng theo ID
+     * Get order by ID
      */
     @CrossOrigin(origins = "*")
     @GetMapping("/orders/{orderId}")
@@ -290,12 +291,12 @@ public class Admin {
             OrderDetailResponseDTO order = adminService.getOrderById(orderId);
             return ResponseEntity.ok(order);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi lấy thông tin đơn hàng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error getting order info: " + e.getMessage());
         }
     }
 
     /**
-     * Cập nhật trạng thái đơn hàng
+     * Update order status
      */
     @CrossOrigin(origins = "*")
     @PutMapping("/orders/{orderId}/status")
@@ -310,14 +311,14 @@ public class Admin {
             }
             
             adminService.updateOrderStatus(orderId, statusUpdate);
-            return ResponseEntity.ok("Cập nhật trạng thái đơn hàng thành công");
+            return ResponseEntity.ok("Order status updated successfully");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi cập nhật trạng thái đơn hàng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error updating order status: " + e.getMessage());
         }
     }
 
     /**
-     * Xóa đơn hàng
+     * Delete order
      */
     @CrossOrigin(origins = "*")
     @DeleteMapping("/orders/{orderId}")
@@ -329,14 +330,14 @@ public class Admin {
             }
             
             adminService.deleteOrder(orderId);
-            return ResponseEntity.ok("Xóa đơn hàng thành công");
+            return ResponseEntity.ok("Order deleted successfully");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi xóa đơn hàng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error deleting order: " + e.getMessage());
         }
     }
 
     /**
-     * Lấy đơn hàng theo trạng thái
+     * Get orders by status
      */
     @CrossOrigin(origins = "*")
     @GetMapping("/orders/status/{status}")
@@ -350,14 +351,14 @@ public class Admin {
             List<OrderDetailResponseDTO> orders = adminService.getOrdersByStatus(status);
             return ResponseEntity.ok(orders);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi lấy đơn hàng theo trạng thái: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error getting orders by status: " + e.getMessage());
         }
     }
 
-    // ========================= Daassbo report danh thu =========================
+    // ========================= Revenue Report =========================
 
     /**
-     * Lấy báo cáo doanh thu theo khoảng thời gian
+     * Get revenue report by date range
      */
     @CrossOrigin(origins = "*")
     @GetMapping("/revenue/report")
@@ -374,12 +375,12 @@ public class Admin {
             AdminRevenueReportDTO report = adminService.getRevenueReport(fromDate, toDate);
             return ResponseEntity.ok(report);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi lấy báo cáo doanh thu: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error getting revenue report: " + e.getMessage());
         }
     }
 
     /**
-     * Lấy số lượt truy cập hiện tại (số user đã login trong 24h qua)
+     * Get current active users count (users logged in within last 24 hours)
      */
     @CrossOrigin(origins = "*")
     @GetMapping("/active-users")
@@ -393,18 +394,18 @@ public class Admin {
             Long activeUsersCount = adminService.getCurrentActiveUsers();
             Map<String, Object> response = new HashMap<>();
             response.put("activeUsersCount", activeUsersCount);
-            response.put("description", "Số lượt truy cập trong 24 giờ qua");
+            response.put("description", "Number of logins in the last 24 hours");
             
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi khi lấy số lượt truy cập: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error getting active users count: " + e.getMessage());
         }
     }
 
     // =========================  METHODS =========================
 
     /**
-     * Kiểm tra quyền admin
+     * Check admin permission
      */
     private boolean isAdmin(HttpServletRequest request) {
         try {

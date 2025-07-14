@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminUserManagementDTO {
+public class AdminUserManagementDTO 
+{
     private Long id;
     private String userName;
     private String role;
