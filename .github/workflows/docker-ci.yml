@@ -85,10 +85,10 @@ jobs:
         docker build -t test-backend ./be/se-cnpm-beelifeventures
         echo "✅ Docker builds successful!"
 
-    - name: Test docker-compose
+    - name: Test docker compose
       run: |
-        echo "Testing docker-compose..."
-        docker-compose config
+        echo "Testing docker compose..."
+        docker compose config
         echo "✅ Docker compose config valid!"
 
   # Deploy to VPS
@@ -115,12 +115,12 @@ jobs:
           git pull origin main || git clone https://github.com/${{ github.repository }}.git . && git checkout main
           
           # Stop containers cũ
-          docker-compose down
+          docker compose down
           
           # Build và start containers mới
-          docker-compose up -d --build
+          docker compose up -d --build
           
           # Kiểm tra services
-          docker-compose ps
+          docker compose ps
           
           echo "✅ Deploy completed!" 
