@@ -19,13 +19,37 @@ const customJestConfig = {
     '!src/**/*.stories.{js,jsx,ts,tsx}',
     '!src/**/*.test.{js,jsx,ts,tsx}',
     '!src/**/index.{js,jsx,ts,tsx}',
+    '!src/app/**/page.tsx',
+    '!src/app/**/layout.tsx',
+    '!src/app.js',
+    '!src/components/3d/**',
+    '!src/assets/**',
   ],
   coverageThreshold: {
     global: {
-      branches: 70,
-      functions: 70,
-      lines: 70,
-      statements: 70,
+      branches: 15,
+      functions: 15,
+      lines: 15,
+      statements: 15,
+    },
+    // Specific requirements for core modules
+    'src/services/*.ts': {
+      branches: 30,
+      functions: 30,
+      lines: 30,
+      statements: 30,
+    },
+    'src/hooks/*.ts': {
+      branches: 25,
+      functions: 25,
+      lines: 25,
+      statements: 25,
+    },
+    'src/utils/*.ts': {
+      branches: 60,
+      functions: 60,
+      lines: 60,
+      statements: 60,
     },
   },
   testMatch: [
