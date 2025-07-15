@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 @RestController
 @RequestMapping("/api/cart")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class Cart {
     
     @Autowired
@@ -31,9 +32,7 @@ public class Cart {
     @Autowired
     private CustomerRepository customerRepository;
 
-    /**
-     * Lấy giỏ hàng của user hiện tại
-     */
+
     @CrossOrigin(origins = "*")
     @GetMapping
     @Operation(summary = "Get current user's cart", security = @SecurityRequirement(name = "Bearer Authentication"))
@@ -43,47 +42,36 @@ public class Cart {
             CartDTO cart = cartService.getOrCreateCart(customer.getId());
             return ResponseEntity.ok(cart);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Lỗi khi lấy giỏ hàng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error getting cart: " + e.getMessage());
         }
     }
 
-    /**
-     * Thêm sản phẩm vào giỏ hàng
-     */
     @CrossOrigin(origins = "*")
     @PostMapping("/add")
     @Operation(summary = "Add product to cart", security = @SecurityRequirement(name = "Bearer Authentication"))
     public ResponseEntity<?> addToCart(@Valid @RequestBody AddToCartDTO addToCartDTO, HttpServletRequest request) {
-        try 
-        {
+        try {
             CustomerEntity customer = getCurrentCustomerFromToken(request);
             CartDTO cart = cartService.addToCart(customer.getId(), addToCartDTO);
             return ResponseEntity.ok(cart);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Lỗi khi thêm sản phẩm vào giỏ hàng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error adding product to cart: " + e.getMessage());
         }
     }
 
-    /**
-     * Cập nhật số lượng sản phẩm trong giỏ hàng
-     */
     @CrossOrigin(origins = "*")
     @PutMapping("/update")
     @Operation(summary = "Update cart item quantity", security = @SecurityRequirement(name = "Bearer Authentication"))
     public ResponseEntity<?> updateCartItem(@Valid @RequestBody UpdateCartItemDTO updateCartItemDTO, HttpServletRequest request) {
-        try 
-        {
+        try {
             CustomerEntity customer = getCurrentCustomerFromToken(request);
             CartDTO cart = cartService.updateCartItem(customer.getId(), updateCartItemDTO);
             return ResponseEntity.ok(cart);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Lỗi khi cập nhật giỏ hàng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error updating cart: " + e.getMessage());
         }
     }
 
-    /**
-     * Xóa sản phẩm khỏi giỏ hàng
-     */
     @CrossOrigin(origins = "*")
     @DeleteMapping("/remove/{productId}")
     @Operation(summary = "Remove product from cart", security = @SecurityRequirement(name = "Bearer Authentication"))
@@ -93,13 +81,10 @@ public class Cart {
             CartDTO cart = cartService.removeFromCart(customer.getId(), productId);
             return ResponseEntity.ok(cart);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Lỗi khi xóa sản phẩm khỏi giỏ hàng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error removing product from cart: " + e.getMessage());
         }
     }
 
-    /**
-     * Xóa tất cả sản phẩm khỏi giỏ hàng
-     */
     @CrossOrigin(origins = "*")
     @DeleteMapping("/clear")
     @Operation(summary = "Clear all items from cart", security = @SecurityRequirement(name = "Bearer Authentication"))
@@ -107,75 +92,64 @@ public class Cart {
         try {
             CustomerEntity customer = getCurrentCustomerFromToken(request);
             cartService.clearCart(customer.getId());
-            return ResponseEntity.ok("Đã xóa tất cả sản phẩm khỏi giỏ hàng");
+            return ResponseEntity.ok("All products have been removed from the cart.");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Lỗi khi xóa giỏ hàng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error clearing cart: " + e.getMessage());
         }
     }
 
-    /**
-     * Lấy số lượng sản phẩm trong giỏ hàng
-     */
     @CrossOrigin(origins = "*")
     @GetMapping("/count")
     @Operation(summary = "Get cart items count", security = @SecurityRequirement(name = "Bearer Authentication"))
-    public ResponseEntity<?> getCartItemCount(HttpServletRequest request) 
-    {
+    public ResponseEntity<?> getCartItemCount(HttpServletRequest request) {
         try {
             CustomerEntity customer = getCurrentCustomerFromToken(request);
             Integer count = cartService.getCartItemCount(customer.getId());
             return ResponseEntity.ok(count);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Lỗi khi lấy số lượng sản phẩm: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error getting product count: " + e.getMessage());
         }
     }
 
-    /**
-     * Tạo đơn hàng từ giỏ hàng
-     */
     @CrossOrigin(origins = "*")
     @PostMapping("/checkout")
     @Operation(summary = "Create order from cart", security = @SecurityRequirement(name = "Bearer Authentication"))
     public ResponseEntity<?> createOrderFromCart(@Valid @RequestBody CartToOrderDTO cartToOrderDTO, HttpServletRequest request) {
-        try 
-        {
+        try {
             CustomerEntity customer = getCurrentCustomerFromToken(request);
             OrdersDTO order = cartService.createOrderFromCart(customer.getId(), cartToOrderDTO);
             return ResponseEntity.ok(order);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Lỗi khi tạo đơn hàng từ giỏ hàng: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error creating order from cart: " + e.getMessage());
         }
     }
 
-    // Helper method để extract customer từ JWT token (giống như trong Orders controller)
+    // Helper method to extract customer from JWT token (same as in Orders controller)
     private CustomerEntity getCurrentCustomerFromToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) 
-        {
-            throw new RuntimeException("Token không hợp lệ");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Invalid token");
         }
 
         String token = authHeader.substring(7);
-        
-        if (!jwtUtil.validateToken(token)) 
-        {
-            throw new RuntimeException("Token không hợp lệ hoặc đã hết hạn");
+
+        if (!jwtUtil.validateToken(token)) {
+            throw new RuntimeException("Invalid or expired token");
         }
-        
+
         String userName = jwtUtil.extractUsername(token);
-        if (userName == null) 
-        {
-            throw new RuntimeException("Không thể lấy thông tin user từ token");
+        if (userName == null) {
+            throw new RuntimeException("Cannot extract user info from token");
         }
 
         Optional<UserAccountEntity> userAccount = userAccountRepository.findByUserName(userName);
         if (!userAccount.isPresent()) {
-            throw new RuntimeException("Không tìm thấy thông tin người dùng");
+            throw new RuntimeException("User not found");
         }
 
         Optional<CustomerEntity> customer = customerRepository.findByUserAccount(userAccount.get());
         if (!customer.isPresent()) {
-            throw new RuntimeException("Không tìm thấy thông tin khách hàng");
+            throw new RuntimeException("Customer info not found");
         }
 
         return customer.get();

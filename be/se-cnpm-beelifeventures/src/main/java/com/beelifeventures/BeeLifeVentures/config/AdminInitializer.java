@@ -13,11 +13,8 @@ public class AdminInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Khởi tạo admin account khi ứng dụng start
+        //  khởi tạo tài khoản quản trị viên nếu chưas tồn tại admimmm
         adminService.initializeAdminAccount();
-        System.out.println("=== Admin account initialized ===");
-        System.out.println("Username: admin");
-        System.out.println("Password: admin");
-        System.out.println("================================");
+        
     }
 }
