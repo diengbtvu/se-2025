@@ -12,5 +12,5 @@ import java.util.List;
 public class CartToOrderDTO {
     private String status = "PENDING";
     private String note;
-    private List<Long> selectedCartItemIds; // Danh sách ID của cart item muốn order
+    private List<Long> selectedCartItemIds;
 }

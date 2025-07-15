@@ -10,7 +10,8 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminRevenueReportDTO {
+public class AdminRevenueReportDTO 
+{
     private LocalDate fromDate;
     private LocalDate toDate;
     private BigDecimal totalRevenue;
