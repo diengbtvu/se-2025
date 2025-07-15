@@ -11,5 +11,5 @@ public class CustomerUpdateDTO {
     private String name;
     private String phoneNumber;
     private String email;
-    private String address; // Thêm trường địa chỉ mới
+    private String address;
 }
