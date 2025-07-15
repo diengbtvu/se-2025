@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/product")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class Product {
     @Autowired
     private ProductService productService;
@@ -27,7 +28,7 @@ public class Product {
   }
   /*  
 
-----------------------------tạm đóng chức năng post sản phâmmr chuyển sang admin de post------------------
+---------------------------- Temporarily disable product POST function, move to admin for posting ------------------
   @PostMapping
   @CrossOrigin(origins = "*")
     public ResponseEntity<?> addProduct(@RequestBody ProductDTO productDTO) {
@@ -41,21 +42,21 @@ public class Product {
       productEntity.setStockQuantity(productDTO.getStockQuantity());
       productEntity.setImageUrl(productDTO.getImageUrl());
       productService.save(productDTO);
-      return ResponseEntity.ok("Đã thêm sản phẩm thành công");
+      return ResponseEntity.ok("Product added successfully");
 
   }
   @DeleteMapping
   @CrossOrigin(origins = "*")
   public ResponseEntity<?> deleteProduct(@RequestBody ProductDTO productDTO) {
     productService.delete(productDTO);
-    return ResponseEntity.ok("đã xóa sản phẩm thành công");
+    return ResponseEntity.ok("Product deleted successfully");
   }
   @PutMapping
   @CrossOrigin(origins = "*")
   public ResponseEntity<?> putProduct(@RequestBody ProductDTO productDTO){
-    ProductDTO tim = productService.findById(productDTO.getId());
-    if (tim == null){
-      throw new EntityNotFoundException("ko tìm thấy sản phẩm với id: " + productDTO.getId());
+    ProductDTO found = productService.findById(productDTO.getId());
+    if (found == null){
+      throw new EntityNotFoundException("Product not found with id: " + productDTO.getId());
     }
     return ResponseEntity.ok(productService.update(productDTO));
 
@@ -74,8 +75,9 @@ public ResponseEntity<?> getProductById(@PathVariable Long id) {
         }
         
         return ResponseEntity.ok(productDTO);
-    } catch (Exception e) {
-        return ResponseEntity.badRequest().body("Lỗi khi tìm sản phẩm: " + e.getMessage());
+    } catch (Exception e) 
+    {
+        return ResponseEntity.badRequest().body("Error finding product: " + e.getMessage());
     }
 }
 
