@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Trò chuyện với Chipi Chipi - Trợ lý mật ong</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+    }
+    .chat-container {
+      width: 400px;
+      height: 600px;
+      background-color: white;
+      border-radius: 10px;
+      margin: 50px auto;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #ddd;
+    }
+    .chat-header {
+      background-color: #ffbb33;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      font-weight: bold;
+    }
+    .chat-history {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      border-bottom: 1px solid #ddd;
+    }
+    .chat-message {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    .chat-message p {
+      max-width: 70%;
+      padding: 10px;
+      border-radius: 10px;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .chat-message.user p {
+      background-color: #d1f7d1;
+      margin-left: auto;
+    }
+    .chat-message.bot p {
+      background-color: #f1f1f1;
+    }
+    .chat-input {
+      display: flex;
+      padding: 10px;
+    }
+    .chat-input textarea {
+      width: 80%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      resize: none;
+      height: 50px;
+    }
+    .chat-input button {
+      padding: 10px;
+      margin-left: 10px;
+      border: none;
+      background-color: #ffbb33;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .chat-input button:hover {
+      background-color: #ffaa00;
+    }
+  </style>
+</head>
+<body>
+
+<div class="chat-container">
+  <div class="chat-header">
+    Chipi Chipi - Tư vấn mật ong
+  </div>
+  <div id="chat-history" class="chat-history"></div>
+  <div class="chat-input">
+    <textarea id="prompt" placeholder="Nhập câu hỏi của bạn..."></textarea>
+    <button onclick="chatWidget.sendMessage()">Gửi</button>
+  </div>
+</div>
+
+<script type="module">
+  import { ChatWidget } from '../../components/ChatWidget/index.js';
+  
+  const chatWidget = new ChatWidget();
+  window.chatWidget = chatWidget; // Make it accessible globally for the button onclick
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    chatWidget.init();
+  });
+</script>
+
+</body>
+</html> 
