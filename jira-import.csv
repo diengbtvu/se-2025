@@ -1,0 +1,43 @@
+Issue Type,Summary,Description,Assignee,Labels,Epic Link,Sprint,Story Points
+Epic,Phân tích & Thiết kế kiến trúc phần mềm,"Phân tích yêu cầu, thiết kế kiến trúc tổng thể, mô tả chức năng từng phần, xác định công nghệ.",Trần Minh Điền,devops;design,,
+Story,Thu thập & phân tích yêu cầu,"Làm việc với giảng viên, xác định yêu cầu nghiệp vụ, chức năng, phi chức năng.",Trần Minh Điền,devops,Phân tích & Thiết kế kiến trúc phần mềm,Sprint 1,3
+Task,Tạo tài liệu đặc tả yêu cầu (SRS),"Viết tài liệu SRS chi tiết, mô tả các chức năng, use case, yêu cầu hệ thống.",Trần Minh Điền,devops,Phân tích & Thiết kế kiến trúc phần mềm,Sprint 1,2
+Story,Thiết kế kiến trúc tổng thể,"Vẽ sơ đồ kiến trúc (microservices/cloud), phân chia module, xác định công nghệ frontend/backend.",Trần Minh Điền,devops,Phân tích & Thiết kế kiến trúc phần mềm,Sprint 1,3
+Task,Thiết kế RESTful API,"Thiết kế endpoint, method, request/response, xác định các service.",Nguyễn Văn Hoàng,backend,Phân tích & Thiết kế kiến trúc phần mềm,Sprint 1,2
+Task,Thiết kế database,"Thiết kế ERD, xác định bảng, quan hệ, chuẩn hóa dữ liệu.",Nguyễn Văn Hoàng,backend,Phân tích & Thiết kế kiến trúc phần mềm,Sprint 1,2
+Task,Thiết kế UI/UX,"Vẽ wireframe, mockup, xác định flow người dùng.",Nguyễn Lê Duy,fe,Phân tích & Thiết kế kiến trúc phần mềm,Sprint 1,2
+
+Epic,Phát triển Backend,"Xây dựng các service backend, API, kết nối database, bảo mật.",Nguyễn Văn Hoàng,backend,,
+Story,Khởi tạo project Spring Boot,"Tạo project, cấu hình Maven, tạo cấu trúc thư mục.",Nguyễn Văn Hoàng,backend,Phát triển Backend,Sprint 2,2
+Task,Tạo model/entity cho hệ thống,"Tạo các entity: User, Product, Order, Cart, v.v.",Nguyễn Văn Hoàng,backend,Phát triển Backend,Sprint 2,2
+Task,Triển khai các API chính,"CRUD cho User, Product, Order, Cart, Auth (JWT).",Nguyễn Văn Hoàng,backend,Phát triển Backend,Sprint 2,3
+Task,Viết unit test cho backend,"Viết test cho service, repository, controller.",Nguyễn Văn Hoàng,backend,Phát triển Backend,Sprint 3,2
+Task,Triển khai bảo mật (JWT, role-based),"Cấu hình bảo mật, phân quyền, xác thực.",Nguyễn Văn Hoàng,backend,Phát triển Backend,Sprint 3,2
+
+Epic,Phát triển Frontend,"Xây dựng giao diện người dùng, kết nối API, xác thực, trải nghiệm người dùng.",Nguyễn Lê Duy,fe,,
+Story,Khởi tạo project Next.js,"Tạo project, cấu hình TypeScript, Tailwind, cấu trúc thư mục.",Nguyễn Lê Duy,fe,Phát triển Frontend,Sprint 2,2
+Task,Triển khai layout, header, footer,"Tạo layout chung, header, footer, navigation.",Nguyễn Lê Duy,fe,Phát triển Frontend,Sprint 2,2
+Task,Trang đăng nhập/đăng ký,"Giao diện, kết nối API Auth, lưu token.",Nguyễn Lê Duy,fe,Phát triển Frontend,Sprint 2,2
+Task,Trang quản lý sản phẩm,"Hiển thị, thêm, sửa, xóa sản phẩm, kết nối API.",Nguyễn Lê Duy,fe,Phát triển Frontend,Sprint 3,2
+Task,Trang giỏ hàng, đặt hàng,"Hiển thị giỏ hàng, đặt hàng, kết nối API.",Nguyễn Lê Duy,fe,Phát triển Frontend,Sprint 3,2
+Task,Viết unit test cho frontend,"Test component, page, hook.",Nguyễn Lê Duy,fe,Phát triển Frontend,Sprint 3,2
+
+Epic,DevOps & CI/CD,"Thiết lập quy trình DevOps, CI/CD, Docker, GitHub Actions, triển khai lên VPS/cloud.",Trần Minh Điền,devops,,
+Story,Thiết lập Git/GitHub,"Tạo repo, cấu hình branch, .gitignore, README.",Trần Minh Điền,devops,DevOps & CI/CD,Sprint 1,2
+Task,Thiết lập Docker cho backend,"Viết Dockerfile, docker-compose cho backend.",Trần Minh Điền,devops,DevOps & CI/CD,Sprint 2,2
+Task,Thiết lập Docker cho frontend,"Viết Dockerfile, docker-compose cho frontend.",Trần Minh Điền,devops,DevOps & CI/CD,Sprint 2,2
+Task,Thiết lập CI/CD với GitHub Actions,"Tạo workflow build, test, deploy tự động.",Trần Minh Điền,devops,DevOps & CI/CD,Sprint 3,2
+Task,Triển khai lên VPS/cloud,"Cấu hình VPS, cài Docker, Nginx, deploy app.",Trần Minh Điền,devops,DevOps & CI/CD,Sprint 3,2
+Task,Thiết lập backup & rollback,"Viết script backup, rollback khi deploy.",Trần Minh Điền,devops,DevOps & CI/CD,Sprint 3,1
+
+Epic,Kiểm thử & Hoàn thiện,"Kiểm thử hệ thống, sửa lỗi, hoàn thiện tài liệu, demo.",Trần Minh Điền,devops,,
+Story,Kiểm thử tích hợp (integration test),"Test end-to-end giữa frontend, backend, database.",Trần Minh Điền,devops,Kiểm thử & Hoàn thiện,Sprint 4,2
+Task,Fix bug & tối ưu hiệu năng,"Sửa lỗi, tối ưu code, cải thiện UX/UI.",Nguyễn Lê Duy,fe,Kiểm thử & Hoàn thiện,Sprint 4,2
+Task,Hoàn thiện tài liệu dự án,"Tổng hợp tài liệu, hướng dẫn cài đặt, sử dụng.",Trần Minh Điền,devops,Kiểm thử & Hoàn thiện,Sprint 4,1
+Task,Chuẩn bị demo, báo cáo,"Chuẩn bị slide, demo, báo cáo cuối kỳ.",Trần Minh Điền,devops,Kiểm thử & Hoàn thiện,Sprint 4,1
+
+Epic,Quản lý dự án & Scrum,"Quản lý backlog, phân chia sprint, daily meeting, cập nhật burndown chart.",Trần Minh Điền,devops,,
+Story,Quản lý Product Backlog,"Tạo, cập nhật backlog, ưu tiên công việc.",Trần Minh Điền,devops,Quản lý dự án & Scrum,Sprint 1,1
+Task,Phân chia Sprint, Sprint Backlog,"Chia sprint, lập kế hoạch sprint backlog.",Trần Minh Điền,devops,Quản lý dự án & Scrum,Sprint 1,1
+Task,Phân công thành viên & cập nhật Jira,"Gán task, cập nhật trạng thái, theo dõi tiến độ.",Trần Minh Điền,devops,Quản lý dự án & Scrum,Sprint 1,1
+Task,Cập nhật Burndown Chart,"Theo dõi tiến độ, cập nhật chart hàng ngày.",Trần Minh Điền,devops,Quản lý dự án & Scrum,Sprint 2,1 
