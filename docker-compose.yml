@@ -31,7 +31,7 @@ services:
       dockerfile: Dockerfile
       target: runner
       args:
-        - NEXT_PUBLIC_API_URL=http://backend:8082
+        - NEXT_PUBLIC_API_URL=http://localhost:8082
     container_name: beelife-frontend
     ports:
       - "8000:8000"
@@ -68,7 +68,7 @@ services:
       - HOSTNAME=0.0.0.0
       - WATCHPACK_POLLING=true
       - CHOKIDAR_USEPOLLING=true
-      - NEXT_PUBLIC_API_URL=http://backend:8082
+      - NEXT_PUBLIC_API_URL=http://localhost:8082
     volumes:
       - ./fe:/app
       - /app/node_modules
