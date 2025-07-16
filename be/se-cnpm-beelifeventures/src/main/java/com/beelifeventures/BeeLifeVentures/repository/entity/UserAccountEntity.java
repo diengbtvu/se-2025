@@ -29,6 +29,10 @@ public class UserAccountEntity {
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
 
+    @OneToOne(mappedBy = "userAccount", cascade = CascadeType.REMOVE, orphanRemoval = true)//////////////////
+    private CustomerEntity customer;// update relationship with CustomerEntity(1-1 delete users = delete customer)
+
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
