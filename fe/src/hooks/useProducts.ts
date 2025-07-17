@@ -16,6 +16,7 @@ export const useProducts = () => {
     loading: false,
     error: null
   });
+  const [hasInitialized, setHasInitialized] = useState(false);
 
   const fetchProducts = useCallback(() => {
     setState(prev => ({ ...prev, loading: true, error: null }));
@@ -37,7 +38,7 @@ export const useProducts = () => {
       });
   }, []);
 
-  const createProduct = (productData: ProductDTO) => {
+  const createProduct = useCallback((productData: ProductDTO) => {
     setState(prev => ({ ...prev, loading: true, error: null }));
     
     return productAPI.create(productData)
@@ -50,9 +51,9 @@ export const useProducts = () => {
         setState(prev => ({ ...prev, loading: false }));
         return { success: false, error: error instanceof Error ? error.message : 'Failed to create product' };
       });
-  };
+  }, [fetchProducts]);
 
-  const updateProduct = (productData: ProductDTO) => {
+  const updateProduct = useCallback((productData: ProductDTO) => {
     setState(prev => ({ ...prev, loading: true, error: null }));
     
     return productAPI.update(productData)
@@ -69,9 +70,9 @@ export const useProducts = () => {
         setState(prev => ({ ...prev, loading: false }));
         return { success: false, error: error instanceof Error ? error.message : 'Failed to update product' };
       });
-  };
+  }, []);
 
-  const deleteProduct = (productData: ProductDTO) => {
+  const deleteProduct = useCallback((productData: ProductDTO) => {
     setState(prev => ({ ...prev, loading: true, error: null }));
     
     return productAPI.delete(productData)
@@ -88,14 +89,15 @@ export const useProducts = () => {
         setState(prev => ({ ...prev, loading: false }));
         return { success: false, error: error instanceof Error ? error.message : 'Failed to delete product' };
       });
-  };
+  }, []);
 
-  // Load products on mount (auth required)
+  // Load products on mount (no auth required for viewing)
   useEffect(() => {
-    if (isAuthenticated) {
+    if (!hasInitialized) {
+      setHasInitialized(true);
       fetchProducts();
     }
-  }, [isAuthenticated, fetchProducts]);
+  }, [hasInitialized, fetchProducts]);
 
   return {
     ...state,
