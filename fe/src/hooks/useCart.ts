@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { cartAPI } from '@/services/api';
 import { CartDTO, CartItem } from '@/types/api';
+import { isLoggedIn } from '@/utils/authUtils';
 
 interface CartState {
   cart: CartDTO | null;
@@ -17,16 +18,23 @@ export const useCart = () => {
 
   const fetchCartRef = useRef<() => Promise<CartDTO>>();
 
-  // Fetch cart on mount
+  // Check if user is authenticated before fetching cart
+  const isAuthenticated = () => {
+    return isLoggedIn();
+  };
+
+  // Fetch cart on mount only if authenticated
   useEffect(() => {
-    // Wait for fetchCart to be available
-    const timer = setTimeout(() => {
-      fetchCartRef.current?.().catch(() => {
-        // Silently fail on mount - user might not be authenticated
-      });
-    }, 100);
-    
-    return () => clearTimeout(timer);
+    // Only fetch cart if user is authenticated
+    if (isAuthenticated()) {
+      const timer = setTimeout(() => {
+        fetchCartRef.current?.().catch(() => {
+          // Silently fail on mount - user might not be authenticated
+        });
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   // Listen for auth state changes to fetch cart when user logs in
@@ -55,6 +63,12 @@ export const useCart = () => {
   }, []);
 
   const fetchCart = useCallback(async () => {
+    // Don't fetch cart if user is not authenticated
+    if (!isAuthenticated()) {
+      console.log('User not authenticated, skipping cart fetch');
+      return null;
+    }
+
     setCartState(prev => ({ ...prev, loading: true, error: null }));
     
     try {
@@ -92,6 +106,11 @@ export const useCart = () => {
   }, [fetchCart]);
 
   const addToCart = useCallback(async (productId: number, quantity: number = 1) => {
+    // Don't add to cart if user is not authenticated
+    if (!isAuthenticated()) {
+      throw new Error('Vui lòng đăng nhập để thêm vào giỏ hàng');
+    }
+
     setCartState(prev => ({ ...prev, loading: true, error: null }));
     
     try {
@@ -110,6 +129,11 @@ export const useCart = () => {
   }, []);
 
   const updateCartItem = useCallback(async (productId: number, quantity: number) => {
+    // Don't update cart if user is not authenticated
+    if (!isAuthenticated()) {
+      throw new Error('Vui lòng đăng nhập để cập nhật giỏ hàng');
+    }
+
     setCartState(prev => ({ ...prev, loading: true, error: null }));
     
     try {
@@ -128,10 +152,16 @@ export const useCart = () => {
   }, []);
 
   const removeFromCart = useCallback(async (productId: number) => {
+    // Don't remove from cart if user is not authenticated
+    if (!isAuthenticated()) {
+      throw new Error('Vui lòng đăng nhập để xóa khỏi giỏ hàng');
+    }
+
     setCartState(prev => ({ ...prev, loading: true, error: null }));
     
     try {
       const result = await cartAPI.removeItem(productId);
+      console.log('Remove item result:', result);
       // Refresh cart after removal
       await fetchCartRef.current?.();
       return result;
@@ -147,6 +177,11 @@ export const useCart = () => {
     note?: string;
     selectedCartItemIds: number[];
   }) => {
+    // Don't checkout if user is not authenticated
+    if (!isAuthenticated()) {
+      throw new Error('Vui lòng đăng nhập để thanh toán');
+    }
+
     setCartState(prev => ({ ...prev, loading: true, error: null }));
     
     try {
@@ -198,8 +233,9 @@ export const useCart = () => {
     setCartState(prev => ({ ...prev, loading: true, error: null }));
     
     try {
-      // Use the clear cart API endpoint
-      await cartAPI.clearCart();
+      // Use the clearCart API endpoint instead of removing items one by one
+      const result = await cartAPI.clearCart();
+      console.log('Clear cart result:', result);
       
       // Clear cart state
       setCartState({
@@ -207,6 +243,8 @@ export const useCart = () => {
         loading: false,
         error: null
       });
+      
+      return result;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to clear cart';
       setCartState(prev => ({ ...prev, loading: false, error: errorMessage }));
@@ -215,7 +253,7 @@ export const useCart = () => {
   }, [cartState.cart]);
 
   const getTotalItems = useCallback(() => {
-    if (!cartState.cart || !cartState.cart.cartItems) {
+    if (!isAuthenticated() || !cartState.cart || !cartState.cart.cartItems) {
       return 0;
     }
     return cartState.cart.cartItems.reduce((total, item) => total + item.quantity, 0);
@@ -229,8 +267,8 @@ export const useCart = () => {
     removeFromCart,
     checkout,
     checkoutAll,
-    clearError,
     clearCart,
-    getTotalItems
+    clearError,
+    getTotalItems,
   };
 }; 

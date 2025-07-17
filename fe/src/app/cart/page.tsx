@@ -15,6 +15,7 @@ export default function Cart() {
   const [note, setNote] = useState('');
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const [isClearLoading, setIsClearLoading] = useState(false);
+  const [removingItems, setRemovingItems] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     if (!isAuthenticated && !authLoading) {
@@ -34,11 +35,25 @@ export default function Cart() {
   };
 
   const handleRemoveItem = async (productId: number) => {
+    const confirmed = window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?');
+    if (!confirmed) {
+      return;
+    }
+
+    setRemovingItems(prev => new Set(prev).add(productId));
     try {
-      await removeFromCart(productId);
+      const result = await removeFromCart(productId);
+      console.log('Remove item result:', result);
+      alert('Đã xóa sản phẩm khỏi giỏ hàng');
     } catch (err) {
       console.error('Error removing item:', err);
-      alert('Không thể xóa sản phẩm');
+      alert('Không thể xóa sản phẩm: ' + (err instanceof Error ? err.message : 'Lỗi không xác định'));
+    } finally {
+      setRemovingItems(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(productId);
+        return newSet;
+      });
     }
   };
 
@@ -54,7 +69,8 @@ export default function Cart() {
 
     setIsClearLoading(true);
     try {
-      await clearCart();
+      const result = await clearCart();
+      console.log('Clear cart result:', result);
       alert('Đã xóa toàn bộ giỏ hàng');
     } catch (err) {
       console.error('Error clearing cart:', err);
@@ -222,11 +238,23 @@ export default function Cart() {
                           {/* Remove Button */}
                           <button
                             onClick={() => handleRemoveItem(item.productId)}
-                            className="text-red-500 hover:text-red-700 p-2"
+                            disabled={removingItems.has(item.productId)}
+                            className={`p-2 rounded-md transition-all ${
+                              removingItems.has(item.productId)
+                                ? 'text-gray-400 cursor-not-allowed'
+                                : 'text-red-500 hover:text-red-700 hover:bg-red-50'
+                            }`}
                           >
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
+                            {removingItems.has(item.productId) ? (
+                              <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                            ) : (
+                              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            )}
                           </button>
                         </div>
                       </div>

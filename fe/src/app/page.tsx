@@ -8,6 +8,12 @@ import { Particles } from "@tsparticles/react";
 import { loadFull } from "tsparticles";
 import type { Engine, Container } from "@tsparticles/engine";
 import { motion } from "framer-motion";
+import { useDriveVideo } from "@/hooks/useDriveVideo";
+import DriveVideoPlayer from "@/components/DriveVideoPlayer";
+import DriveImage from "@/components/DriveImage";
+import { DRIVE_CONFIG } from "@/config/drive";
+import DriveVideoPlayerWrapper from "@/components/DriveVideoPlayerWrapper";
+import DriveImageWrapper from "@/components/DriveImageWrapper";
 
 // Cấu hình particle cho hiệu ứng ong bay
 const particlesConfig = {
@@ -42,10 +48,10 @@ const particlesConfig = {
     move: {
       enable: true,
       speed: 3,
-      direction: "none",
+      direction: "none" as const,
       random: true,
       straight: false,
-      outMode: "out",
+      outMode: "out" as const,
       attract: {
         enable: false,
         rotate: {
@@ -56,13 +62,15 @@ const particlesConfig = {
     }
   },
   interactivity: {
-    detectsOn: "window",
+    detectsOn: "window" as const,
     events: {
       onHover: {
         enable: true,
         mode: "repulse"
       },
-      resize: true
+      resize: {
+        enable: true
+      }
     },
     modes: {
       repulse: {
@@ -110,18 +118,18 @@ export default function Home() {
           className="absolute inset-0 z-20"
         />
         <div className="absolute inset-0 z-0">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
+          <DriveVideoPlayerWrapper
+            videoName="blur.mp4"
+            fallbackSrc="/videos/blur.mp4"
             className="object-cover w-full h-full brightness-50"
             style={{
               transform: `scale(${1 + scrollY * 0.0005}) translateY(${scrollY * 0.5}px)`
             }}
-          >
-            <source src="/videos/blur.mp4" type="video/mp4" />
-          </video>
+            autoPlay={true}
+            muted={true}
+            loop={true}
+            playsInline={true}
+          />
         </div>
         <div className="container mx-auto px-4 z-10">
           <motion.div
@@ -163,8 +171,8 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="text-center group hover:transform hover:scale-105 transition-all duration-300">
               <div className="mb-6 overflow-hidden rounded-lg">
-                <Image
-                  src="/images/monitors your colonies 24_7-min.webp"
+                <DriveImageWrapper
+                  imageName="monitors your colonies 24_7-min.webp"
                   alt="24/7 Monitoring"
                   width={300}
                   height={200}
@@ -179,8 +187,8 @@ export default function Home() {
             </div>
             <div className="text-center group hover:transform hover:scale-105 transition-all duration-300">
               <div className="mb-6 overflow-hidden rounded-lg">
-                <Image
-                  src="/images/provides a better bee habitat-min.webp"
+                <DriveImageWrapper
+                  imageName="provides a better bee habitat-min.webp"
                   alt="Better Habitat"
                   width={300}
                   height={200}
@@ -195,8 +203,8 @@ export default function Home() {
             </div>
             <div className="text-center group hover:transform hover:scale-105 transition-all duration-300">
               <div className="mb-6 overflow-hidden rounded-lg">
-                <Image
-                  src="/images/honey and hive.webp"
+                <DriveImageWrapper
+                  imageName="honey and hive.webp"
                   alt="Quality Honey"
                   width={300}
                   height={200}
@@ -206,7 +214,7 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-semibold mb-4 text-[#4E4540] group-hover:text-[#65BD60] transition-colors">Mật ong chất lượng</h3>
               <p className="text-gray-600">
-                Sản phẩm mật ong tinh khiết, đạt chuẩn chất lượng quốc tế
+                Sản xuất mật ong nguyên chất với công nghệ hiện đại và quy trình kiểm soát chất lượng
               </p>
             </div>
           </div>

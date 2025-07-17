@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { API_CONFIG } from "@/config/api";
+import AuthRequiredMessage from "@/components/common/AuthRequiredMessage";
 
 export default function Orders() {
   const { isAuthenticated, loading } = useAuth();
@@ -125,7 +126,26 @@ export default function Orders() {
   }
 
   if (!isAuthenticated) {
-    return null;
+    return (
+      <main className="min-h-screen pt-20 bg-gray-50">
+        <div className="container mx-auto px-4 py-20">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h1 className="text-4xl font-bold text-[#4E4540] mb-4">
+                Đơn hàng của tôi
+              </h1>
+              <p className="text-gray-600">
+                Theo dõi trạng thái đơn hàng của bạn
+              </p>
+            </div>
+            <AuthRequiredMessage 
+              message="Vui lòng đăng nhập để xem đơn hàng của bạn"
+              showLoginButton={true}
+            />
+          </div>
+        </div>
+      </main>
+    );
   }
 
   return (
