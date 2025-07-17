@@ -336,7 +336,7 @@ export const cartAPI = {
     });
   },
 
-  // Remove item from cart
+  // Remove item from cart - Updated to use correct endpoint
   removeItem: (productId: number) => {
     console.log('Removing cart item:', productId);
     
@@ -353,7 +353,8 @@ export const cartAPI = {
           throw new Error(text || `HTTP ${res.status}: ${res.statusText}`);
         });
       }
-      return res.json();
+      // API trả về text message, không phải JSON
+      return res.text();
     })
     .then(result => {
       console.log('Cart remove success:', result);
@@ -399,7 +400,7 @@ export const cartAPI = {
     });
   },
 
-  // Clear all items from cart
+  // Clear all items from cart - Updated to use correct endpoint
   clearCart: () => {
     console.log('Clearing cart...');
     

@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useAuth } from '@/contexts/AuthContext';
+import { motion } from 'framer-motion';
 import { adminAPI } from '@/services/adminAPI';
 
-interface ProductForm {
+interface ProductFormData {
   name: string;
   description: string;
   price: number;
@@ -16,18 +16,14 @@ interface ProductForm {
   expiryDate: string;
   stockQuantity: number;
   imageUrl: string;
-  category: string;
 }
 
-export default function NewProduct() {
+export default function CreateProduct() {
+  const { isAuthenticated, user } = useAuth();
   const router = useRouter();
-  const { user, isAuthenticated } = useAuth();
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-
-  const [formData, setFormData] = useState<ProductForm>({
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     description: '',
     price: 0,
@@ -36,62 +32,38 @@ export default function NewProduct() {
     expiryDate: '',
     stockQuantity: 0,
     imageUrl: '',
-    category: ''
   });
 
-  useEffect(() => {
-    if (!loading && (!isAuthenticated || (user && user.role !== 'ADMIN'))) {
-      router.push('/login');
-    }
-  }, [isAuthenticated, user, loading, router]);
-
-  useEffect(() => {
-    setLoading(false);
-  }, []);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'number' ? parseFloat(value) || 0 : value
+      [name]: name === 'price' || name === 'stockQuantity' ? parseFloat(value) || 0 : value
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
-    setError('');
-    setSuccess('');
+    setLoading(true);
+    setError(null);
 
     try {
-      const response = await adminAPI.createProduct(formData);
-      if (response.success) {
-        setSuccess('Sản phẩm đã được tạo thành công!');
-        setTimeout(() => {
-          router.push('/admin/products');
-        }, 2000);
-      } else {
-        setError(response.message || 'Có lỗi xảy ra khi tạo sản phẩm');
+      // Validate required fields
+      if (!formData.name || !formData.description || formData.price <= 0 || formData.stockQuantity < 0) {
+        throw new Error('Vui lòng điền đầy đủ thông tin bắt buộc');
       }
-    } catch (err: any) {
-      setError(err.message || 'Có lỗi xảy ra khi tạo sản phẩm');
+
+      await adminAPI.createProduct(formData);
+      
+      // Redirect to products list
+      router.push('/admin/products');
+    } catch (error) {
+      console.error('Lỗi khi tạo sản phẩm:', error);
+      setError(error instanceof Error ? error.message : 'Có lỗi xảy ra khi tạo sản phẩm');
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
-
-  if (loading) {
-    return (
-      <main className="min-h-screen pt-20">
-        <div className="container mx-auto px-4 py-20">
-          <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#65BD60]"></div>
-            <p className="mt-4 text-gray-600">Đang tải...</p>
-          </div>
-        </div>
-      </main>
-    );
-  }
 
   if (!isAuthenticated || (user && user.role !== 'ADMIN')) {
     return null;
@@ -113,10 +85,9 @@ export default function NewProduct() {
             </div>
             <Link
               href="/admin/products"
-              className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-all flex items-center"
+              className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold transition-all"
             >
-              <span className="mr-2">←</span>
-              Quay lại
+              ← Quay lại
             </Link>
           </div>
 
@@ -124,25 +95,21 @@ export default function NewProduct() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
             className="bg-white rounded-xl shadow-sm p-8"
           >
-            {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-700">{error}</p>
-              </div>
-            )}
-
-            {success && (
-              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                <p className="text-green-700">{success}</p>
-              </div>
-            )}
-
             <form onSubmit={handleSubmit} className="space-y-6">
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <p className="text-red-700">{error}</p>
+                </div>
+              )}
+
+              {/* Basic Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Tên sản phẩm *
+                    Tên sản phẩm <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -155,29 +122,29 @@ export default function NewProduct() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Danh mục *
-                  </label>
-                  <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#65BD60] focus:border-transparent"
-                  >
-                    <option value="">Chọn danh mục</option>
-                    <option value="Thuốc">Thuốc</option>
-                    <option value="Thực phẩm chức năng">Thực phẩm chức năng</option>
-                    <option value="Dụng cụ y tế">Dụng cụ y tế</option>
-                    <option value="Chăm sóc cá nhân">Chăm sóc cá nhân</option>
-                    <option value="Khác">Khác</option>
-                  </select>
-                </div>
+                {/* Removed Category Input */}
+              </div>
 
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Mô tả <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  required
+                  rows={4}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#65BD60] focus:border-transparent"
+                  placeholder="Mô tả chi tiết về sản phẩm..."
+                />
+              </div>
+
+              {/* Pricing and Stock */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Giá (VNĐ) *
+                    Giá (VNĐ) <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"
@@ -186,6 +153,7 @@ export default function NewProduct() {
                     onChange={handleInputChange}
                     required
                     min="0"
+                    step="1000"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#65BD60] focus:border-transparent"
                     placeholder="0"
                   />
@@ -193,7 +161,7 @@ export default function NewProduct() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Số lượng tồn kho *
+                    Số lượng tồn kho <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"
@@ -217,24 +185,13 @@ export default function NewProduct() {
                     value={formData.productType}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#65BD60] focus:border-transparent"
-                    placeholder="Nhập loại sản phẩm"
+                    placeholder="Ví dụ: Hữu cơ, Tự nhiên..."
                   />
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    URL hình ảnh
-                  </label>
-                  <input
-                    type="url"
-                    name="imageUrl"
-                    value={formData.imageUrl}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#65BD60] focus:border-transparent"
-                    placeholder="https://example.com/image.jpg"
-                  />
-                </div>
-
+              {/* Dates */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Ngày sản xuất
@@ -262,35 +219,56 @@ export default function NewProduct() {
                 </div>
               </div>
 
+              {/* Image URL */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Mô tả *
+                  URL hình ảnh <span className="text-red-500">*</span>
                 </label>
-                <textarea
-                  name="description"
-                  value={formData.description}
+                <input
+                  type="url"
+                  name="imageUrl"
+                  value={formData.imageUrl}
                   onChange={handleInputChange}
                   required
-                  rows={4}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#65BD60] focus:border-transparent"
-                  placeholder="Nhập mô tả chi tiết về sản phẩm"
+                  placeholder="https://example.com/image.jpg"
                 />
+                {formData.imageUrl && (
+                  <div className="mt-2">
+                    <img
+                      src={formData.imageUrl}
+                      alt="Preview"
+                      className="w-32 h-32 object-cover rounded-lg border"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
-              <div className="flex space-x-4 pt-6">
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="flex-1 bg-[#65BD60] hover:bg-[#4e9749] text-white py-3 px-6 rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {submitting ? 'Đang tạo...' : 'Tạo sản phẩm'}
-                </button>
+              {/* Submit Buttons */}
+              <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
                 <Link
                   href="/admin/products"
-                  className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold transition-all text-center"
+                  className="px-6 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold transition-all"
                 >
                   Hủy
                 </Link>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="px-6 py-2 bg-[#65BD60] hover:bg-[#4e9749] text-white rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <div className="flex items-center">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Đang tạo...
+                    </div>
+                  ) : (
+                    'Tạo sản phẩm'
+                  )}
+                </button>
               </div>
             </form>
           </motion.div>

@@ -101,12 +101,17 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-12">
-            <h1 className="text-4xl font-bold text-[#4E4540] mb-4">
-              Bảng điều khiển Admin
-            </h1>
-            <p className="text-gray-600">
-              Quản lý hệ thống BeeLife Ventures
-            </p>
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-4xl font-bold text-[#4E4540] mb-4">
+                  Bảng điều khiển Admin
+                </h1>
+                <p className="text-gray-600">
+                  Quản lý hệ thống BeeLife Ventures
+                </p>
+              </div>
+
+            </div>
           </div>
 
           {/* Stats Cards */}
@@ -252,27 +257,6 @@ export default function AdminDashboard() {
                   icon: "👥",
                   href: "/admin/users",
                   color: "bg-purple-100 text-purple-600",
-                },
-                {
-                  title: "Báo cáo doanh thu",
-                  description: "Thống kê và báo cáo",
-                  icon: "📊",
-                  href: "/admin/reports",
-                  color: "bg-yellow-100 text-yellow-600",
-                },
-                {
-                  title: "Cài đặt hệ thống",
-                  description: "Cấu hình và tùy chỉnh",
-                  icon: "⚙️",
-                  href: "/admin/settings",
-                  color: "bg-gray-100 text-gray-600",
-                },
-                {
-                  title: "Nhật ký hoạt động",
-                  description: "Xem log hệ thống",
-                  icon: "📝",
-                  href: "/admin/logs",
-                  color: "bg-red-100 text-red-600",
                 },
               ].map((item, index) => (
                 <Link

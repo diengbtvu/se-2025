@@ -48,8 +48,15 @@ yarn install
 ### 3. Cấu hình môi trường
 Tạo file `.env.local` trong thư mục `fe/`:
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:8080/api
+NEXT_PUBLIC_GEMINI_API_KEY=AIzaSyBF1HkrExLz9FEz57UUoFqWSmvOEEkWwos
+NEXT_PUBLIC_GEMINI_API_URL=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
+
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+
+NEXT_PUBLIC_GOOGLE_DRIVE_API_KEY=AIzaSyCoNP7NlSyCOprTrJgk5EZmWSenRG0d-eM
+NEXT_PUBLIC_GOOGLE_DRIVE_IMAGES_FOLDER_ID=1-KWjDCIn474-uqQyGjJmtmWIqKjhWXZQ
+NEXT_PUBLIC_GOOGLE_DRIVE_VIDEOS_FOLDER_ID=1CUBTNW6BW0utQB2igzFYlml2izWCCEwM
+
 ```
 
 ### 4. Chạy development server

@@ -19,7 +19,6 @@ export interface ProductDTO {
   productType?: string;
   stockQuantity?: number;
   features?: string[];
-  inStock?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

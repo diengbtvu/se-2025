@@ -287,20 +287,7 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* API Test Section */}
-          <div className="mt-8 bg-blue-50 rounded-2xl p-6">
-            <h3 className="text-lg font-semibold text-[#4E4540] mb-4">
-              Test API Profile
-            </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Thông tin này được lấy từ API <code>/api/auth/profile</code> với token xác thực.
-            </p>
-            <div className="bg-white rounded-lg p-4 border">
-              <pre className="text-xs text-gray-700 overflow-x-auto">
-                {JSON.stringify(user, null, 2)}
-              </pre>
-            </div>
-          </div>
+
         </div>
       </div>
     </main>
