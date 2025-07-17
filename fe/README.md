@@ -177,6 +177,18 @@ fe/
 - [x] SEO optimization
 - [x] Error boundaries
 
+### ✅ **Google Drive API Integration**
+- [x]  Tải dữ liệu tĩnh (hình ảnh, tệp đính kèm) lên Google Drive thông qua Google Drive API.
+- [x]  Tự động xác thực OAuth2 và lưu trữ file trong thư mục được chỉ định trên Google Drive.
+- [x]  Phân quyền chia sẻ file nếu cần (public/private).
+- [x] Dùng trong các trường hợp: người dùng tải ảnh sản phẩm, hóa đơn, chứng từ, v.v.
+
+### ✅ **Gemini AI Chatbot (Google Generative AI API)**
+- [x]  Tích hợp AI chatbot sử dụng Google Gemini API để hỗ trợ khách hàng ngay trong trang web.
+- [x]  Hỏi đáp tự nhiên về sản phẩm, tình trạng đơn hàng, hỗ trợ sử dụng website...
+- [x]  Hỗ trợ đa ngôn ngữ và phản hồi theo thời gian thực (real-time chat).
+
+
 ## 🔧 Scripts có sẵn
 
 ```bash
