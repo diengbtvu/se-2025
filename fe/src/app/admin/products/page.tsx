@@ -6,6 +6,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { adminAPI } from "@/services/adminAPI";
+import DeleteProductModal from "@/components/DeleteProductModal";
+import ProductDeleteWarning from "@/components/ProductDeleteWarning";
+import { getStockQuantityColor, formatStockQuantity } from "@/utils/stockUtils";
+import StockStatusBadge from "@/components/StockStatusBadge";
+import ProductStatistics from "@/components/admin/ProductStatistics";
 
 interface Product {
   id: number;
@@ -17,8 +22,6 @@ interface Product {
   expiryDate: string;
   stockQuantity: number;
   imageUrl: string;
-  inStock: boolean;
-  category: string;
 }
 
 export default function AdminProducts() {
@@ -28,9 +31,11 @@ export default function AdminProducts() {
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showWarningModal, setShowWarningModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+  const [deleteConstraints, setDeleteConstraints] = useState<any>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated && !loading) {
@@ -63,36 +68,92 @@ export default function AdminProducts() {
     }
   };
 
-  const handleDeleteClick = (product: Product) => {
+  const handleDeleteClick = async (product: Product) => {
     setProductToDelete(product);
-    setShowDeleteModal(true);
+    
+    // Kiểm tra xem có thể xóa hay không trước
+    try {
+      const canDeleteResult = await adminAPI.canDeleteProduct(product.id);
+      
+      if (canDeleteResult.canDelete) {
+        // Có thể xóa, mở modal xác nhận
+        setDeleteConstraints(canDeleteResult.constraints);
+        setShowDeleteModal(true);
+      } else {
+        // Không thể xóa, hiển thị cảnh báo
+        setDeleteConstraints(canDeleteResult.constraints);
+        setShowWarningModal(true);
+      }
+    } catch (error) {
+      console.error('Lỗi khi kiểm tra khả năng xóa:', error);
+      // Mặc định hiển thị cảnh báo nếu có lỗi
+      setDeleteConstraints({
+        cartItems: 0,
+        orderItems: 0,
+        totalOrders: 0,
+        message: 'Không thể kiểm tra ràng buộc'
+      });
+      setShowWarningModal(true);
+    }
   };
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = async (forceDelete: boolean) => {
     if (!productToDelete) return;
-
+    
+    setDeleteLoading(true);
     try {
-      await adminAPI.deleteProduct(productToDelete.id);
+      if (forceDelete) {
+        await adminAPI.forceDeleteProduct(productToDelete.id);
+      } else {
+        await adminAPI.deleteProduct(productToDelete.id);
+      }
       
       setShowDeleteModal(false);
       setProductToDelete(null);
+      setDeleteConstraints(null);
       
       // Refresh danh sách
       fetchProducts();
+      
+      alert('Xóa sản phẩm thành công!');
     } catch (error) {
       console.error('Lỗi khi xóa sản phẩm:', error);
-      alert('Có lỗi xảy ra khi xóa sản phẩm');
+      alert('Có lỗi xảy ra khi xóa sản phẩm: ' + (error instanceof Error ? error.message : 'Lỗi không xác định'));
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
+  const handleForceDelete = async () => {
+    if (!productToDelete) return;
+    
+    if (confirm(`Bạn có chắc chắn muốn xóa cưỡng bức sản phẩm "${productToDelete.name}"?\n\nHành động này sẽ xóa:\n• Tất cả giỏ hàng chứa sản phẩm này\n• Tất cả đơn hàng chứa sản phẩm này\n• Sản phẩm\n\nHành động này KHÔNG THỂ HOÀN TÁC!`)) {
+      setDeleteLoading(true);
+      try {
+        await adminAPI.forceDeleteProduct(productToDelete.id);
+        
+        setShowWarningModal(false);
+        setProductToDelete(null);
+        setDeleteConstraints(null);
+        
+        // Refresh danh sách
+        fetchProducts();
+        
+        alert('Xóa sản phẩm thành công!');
+      } catch (error) {
+        console.error('Lỗi khi force delete sản phẩm:', error);
+        alert('Có lỗi xảy ra khi xóa sản phẩm: ' + (error instanceof Error ? error.message : 'Lỗi không xác định'));
+      } finally {
+        setDeleteLoading(false);
+      }
     }
   };
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          product.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    return matchesSearch;
   });
-
-  const categories = ["all", ...Array.from(new Set(products.map(p => p.category).filter(Boolean)))];
 
   if (loading) {
     return (
@@ -149,77 +210,12 @@ export default function AdminProducts() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#65BD60] focus:border-transparent"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Danh mục
-                </label>
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#65BD60] focus:border-transparent"
-                >
-                  {categories.map((category, index) => (
-                    <option key={`${category}-${index}`} value={category}>
-                      {category === "all" ? "Tất cả" : category}
-                    </option>
-                  ))}
-                </select>
-              </div>
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white rounded-xl shadow-sm p-4">
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                  <span className="text-blue-600">📦</span>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Tổng sản phẩm</p>
-                  <p className="text-xl font-bold text-[#4E4540]">{products.length}</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white rounded-xl shadow-sm p-4">
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                  <span className="text-green-600">✅</span>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Có sẵn</p>
-                  <p className="text-xl font-bold text-[#4E4540]">
-                    {products.filter(p => p.inStock).length}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white rounded-xl shadow-sm p-4">
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
-                  <span className="text-red-600">❌</span>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Hết hàng</p>
-                  <p className="text-xl font-bold text-[#4E4540]">
-                    {products.filter(p => !p.inStock).length}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white rounded-xl shadow-sm p-4">
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
-                  <span className="text-purple-600">🏷️</span>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Danh mục</p>
-                  <p className="text-xl font-bold text-[#4E4540]">
-                    {categories.length - 1}
-                  </p>
-                </div>
-              </div>
-            </div>
+          {/* Product Statistics */}
+          <div className="mb-8">
+            <ProductStatistics />
           </div>
 
           {/* Products Table */}
@@ -263,10 +259,10 @@ export default function AdminProducts() {
                         Sản phẩm
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Danh mục
+                        Giá
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Giá
+                        Tồn kho
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Trạng thái
@@ -300,22 +296,16 @@ export default function AdminProducts() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                            {product.category}
-                          </span>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4E4540]">
+                          {product.price === 0 ? 'Miễn phí' : `${(product.price || 0).toLocaleString()} VNĐ`}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4E4540]">
-                          {product.price === 0 ? 'Miễn phí' : `${product.price.toLocaleString()} VNĐ`}
+                          <span className={`font-medium ${getStockQuantityColor(product.stockQuantity)}`}>
+                            {formatStockQuantity(product.stockQuantity)}
+                          </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            product.inStock 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-red-100 text-red-800'
-                          }`}>
-                            {product.inStock ? 'Có sẵn' : 'Hết hàng'}
-                          </span>
+                          <StockStatusBadge stockQuantity={product.stockQuantity} />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex space-x-2">
@@ -349,36 +339,36 @@ export default function AdminProducts() {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Modal */}
       {showDeleteModal && productToDelete && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold text-[#4E4540] mb-4">
-              Xác nhận xóa sản phẩm
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Bạn có chắc chắn muốn xóa sản phẩm "{productToDelete.name}"? 
-              Hành động này không thể hoàn tác.
-            </p>
-            <div className="flex space-x-3">
-              <button
-                onClick={handleDeleteConfirm}
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors"
-              >
-                Xóa
-              </button>
-              <button
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  setProductToDelete(null);
-                }}
-                className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg font-semibold transition-colors"
-              >
-                Hủy
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeleteProductModal
+          isOpen={showDeleteModal}
+          onClose={() => {
+            setShowDeleteModal(false);
+            setProductToDelete(null);
+            setDeleteConstraints(null);
+          }}
+          onConfirm={handleDeleteConfirm}
+          productName={productToDelete.name}
+          productId={productToDelete.id}
+          constraints={deleteConstraints}
+          loading={deleteLoading}
+        />
+      )}
+
+      {/* Warning Modal */}
+      {showWarningModal && productToDelete && (
+        <ProductDeleteWarning
+          isOpen={showWarningModal}
+          onClose={() => {
+            setShowWarningModal(false);
+            setProductToDelete(null);
+            setDeleteConstraints(null);
+          }}
+          productName={productToDelete.name}
+          productId={productToDelete.id}
+          constraints={deleteConstraints}
+        />
       )}
     </main>
   );

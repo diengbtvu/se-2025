@@ -1,0 +1,4 @@
+
+GOOGLE_DRIVE_API_KEY=AIzaSyCoNP7NlSyCOprTrJgk5EZmWSenRG0d-eM
+GOOGLE_DRIVE_IMAGES_FOLDER_LINK==https://drive.google.com/drive/folders/1-KWjDCIn474-uqQyGjJmtmWIqKjhWXZQ?usp=drive_link
+GOOGLE_DRIVE_VIDEOS_FOLDER_LINK=https://drive.google.com/drive/folders/1CUBTNW6BW0utQB2igzFYlml2izWCCEwM?usp=drive_link
