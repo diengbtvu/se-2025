@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { adminAPI } from "@/services/adminAPI";
+import DeleteUserModal from "@/components/admin/DeleteUserModal";
+import UserStatistics from "@/components/admin/UserStatistics";
 
 interface User {
   id: number;
@@ -64,19 +66,36 @@ export default function AdminUsers() {
     setShowDeleteModal(true);
   };
 
-  const handleDeleteConfirm = async () => {
-    if (!userToDelete) return;
-
+  const handleDeleteConfirm = async (userId: number, forceDelete: boolean = false) => {
     try {
-      await adminAPI.deleteUser(userToDelete.id);
+      // Kiểm tra ràng buộc trước khi xóa
+      const constraints = await adminAPI.checkUserDeletionConstraints(userId);
       
-      // Tạm thời chỉ đóng modal và cập nhật UI
-      setUsers(users.filter(u => u.id !== userToDelete.id));
+      if (!constraints.canDelete) {
+        // Không cho phép xóa khi có ràng buộc
+        const message = constraints.constraints.message || 
+          `Không thể xóa người dùng này vì có ràng buộc dữ liệu.`;
+        
+        alert(message);
+        setShowDeleteModal(false);
+        setUserToDelete(null);
+        return;
+      }
+
+      // Chỉ xóa khi không có ràng buộc
+      const result = await adminAPI.deleteUser(userId);
+      console.log('Delete user result:', result);
+      
+      // Cập nhật UI
+      setUsers(users.filter(u => u.id !== userId));
       setShowDeleteModal(false);
       setUserToDelete(null);
+      
+      alert('Xóa người dùng thành công!');
     } catch (error) {
       console.error('Lỗi khi xóa người dùng:', error);
-      alert('Có lỗi xảy ra khi xóa người dùng');
+      const errorMessage = error instanceof Error ? error.message : 'Lỗi không xác định';
+      alert('Có lỗi xảy ra khi xóa người dùng: ' + errorMessage);
     }
   };
 
@@ -168,53 +187,8 @@ export default function AdminUsers() {
             </Link>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white rounded-xl shadow-sm p-4">
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                  <span className="text-blue-600">👥</span>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Tổng người dùng</p>
-                  <p className="text-xl font-bold text-[#4E4540]">{totalUsers}</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white rounded-xl shadow-sm p-4">
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                  <span className="text-green-600">✅</span>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Đang hoạt động</p>
-                  <p className="text-xl font-bold text-[#4E4540]">{activeUsers}</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white rounded-xl shadow-sm p-4">
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
-                  <span className="text-red-600">❌</span>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Đã khóa</p>
-                  <p className="text-xl font-bold text-[#4E4540]">{totalUsers - activeUsers}</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white rounded-xl shadow-sm p-4">
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
-                  <span className="text-purple-600">👑</span>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Quản trị viên</p>
-                  <p className="text-xl font-bold text-[#4E4540]">{adminUsers}</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* User Statistics */}
+          <UserStatistics />
 
           {/* Filters */}
           <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
@@ -358,12 +332,6 @@ export default function AdminUsers() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex space-x-2">
-                            <Link
-                              href={`/admin/users/${user.id}/edit`}
-                              className="text-[#65BD60] hover:text-[#4e9749] transition-colors"
-                            >
-                              Sửa
-                            </Link>
                             {user.role !== 'ADMIN' && (
                               <button
                                 onClick={() => handleDeleteClick(user)}
@@ -384,37 +352,16 @@ export default function AdminUsers() {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && userToDelete && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold text-[#4E4540] mb-4">
-              Xác nhận xóa người dùng
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Bạn có chắc chắn muốn xóa người dùng "{userToDelete.name}"? 
-              Hành động này không thể hoàn tác.
-            </p>
-            <div className="flex space-x-3">
-              <button
-                onClick={handleDeleteConfirm}
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors"
-              >
-                Xóa
-              </button>
-              <button
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  setUserToDelete(null);
-                }}
-                className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg font-semibold transition-colors"
-              >
-                Hủy
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Delete User Modal */}
+      <DeleteUserModal
+        user={userToDelete}
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setUserToDelete(null);
+        }}
+        onDelete={handleDeleteConfirm}
+      />
     </main>
   );
 } 

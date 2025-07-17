@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { authAPI } from '@/services/api';
 import { UserAccountDTO, ProfileResponse } from '@/types/api';
+import { isLoggedIn, clearAuthData } from '@/utils/authUtils';
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -17,35 +18,57 @@ export const useAuth = () => {
     loading: true
   });
 
+  // Function to check if user is logged in
+  const checkLoginStatus = () => {
+    return isLoggedIn();
+  };
+
+  // Function to validate token and get profile
+  const validateTokenAndGetProfile = async (token: string) => {
+    try {
+      authAPI.setToken(token);
+      const user: ProfileResponse = await authAPI.getProfile();
+      return { success: true, user };
+    } catch (error) {
+      console.warn('Token validation failed:', error);
+      // Clear invalid token
+      authAPI.clearToken();
+      clearAuthData();
+      return { success: false, error };
+    }
+  };
+
   // Initialize auth state from localStorage
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      authAPI.setToken(token);
-      // Try to get user profile
-      authAPI.getProfile()
-        .then((user: ProfileResponse) => {
+    const initializeAuth = async () => {
+      const token = localStorage.getItem('token');
+      
+      if (token) {
+        // Only try to get profile if we have a token
+        const result = await validateTokenAndGetProfile(token);
+        
+        if (result.success) {
           setAuthState({
             isAuthenticated: true,
-            user,
+            user: result.user,
             token,
             loading: false
           });
-        })
-        .catch(() => {
+        } else {
           // Token is invalid, clear it
-          authAPI.clearToken();
-          localStorage.removeItem('token');
           setAuthState({
             isAuthenticated: false,
             user: null,
             token: null,
             loading: false
           });
-        });
-    } else {
-      setAuthState(prev => ({ ...prev, loading: false }));
-    }
+        }
+      } else {
+        setAuthState(prev => ({ ...prev, loading: false }));
+      }
+    };
+
+    initializeAuth();
   }, []);
 
   const login = (userName: string, password: string) => {
@@ -104,7 +127,7 @@ export const useAuth = () => {
 
   const logout = () => {
     authAPI.clearToken();
-    localStorage.removeItem('token');
+    clearAuthData();
     setAuthState({
       isAuthenticated: false,
       user: null,
@@ -165,6 +188,7 @@ export const useAuth = () => {
     register,
     logout,
     refreshProfile,
-    updateProfile
+    updateProfile,
+    checkLoginStatus
   };
 }; 
