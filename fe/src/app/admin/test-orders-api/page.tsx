@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { adminAPI } from "@/services/adminAPI";
 
 export default function TestOrdersAPIPage() {
-  const { isAuthenticated, user, loading } = useAuth();
+  const { isAuthenticated, user, loading: authLoading } = useAuth();
   const [testResult, setTestResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
@@ -79,7 +79,7 @@ export default function TestOrdersAPIPage() {
     }
   };
 
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen pt-20">
         <div className="container mx-auto px-4 py-20">

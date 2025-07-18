@@ -111,12 +111,15 @@ export default function Home() {
     <main className="min-h-screen">
       {/* Hero Section with Parallax */}
       <section className="relative h-screen flex items-center overflow-hidden">
+        {/* Temporarily disabled due to TypeScript issues
         <Particles
           id="tsparticles"
           init={particlesInit}
+          loaded={particlesLoaded}
           options={particlesConfig}
           className="absolute inset-0 z-20"
         />
+        */}
         <div className="absolute inset-0 z-0">
           <DriveVideoPlayerWrapper
             videoName="blur.mp4"

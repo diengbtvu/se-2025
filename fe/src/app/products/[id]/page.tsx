@@ -19,12 +19,7 @@ export default function ProductDetail() {
 
   const productId = params.id ? parseInt(params.id as string) : null;
 
-  // Fetch products if not loaded
-  useEffect(() => {
-    if (isAuthenticated && products.length === 0) {
-      fetchProducts();
-    }
-  }, [isAuthenticated, products.length, fetchProducts]);
+  // Products are automatically fetched by useProducts hook
 
   // Find the specific product
   const product = products.find(p => p.id === productId);
@@ -234,7 +229,21 @@ export default function ProductDetail() {
 
               {/* Action Buttons */}
               <div className="space-y-4">
-                <AddToCartButtons product={product} />
+                {isAuthenticated ? (
+                  <AddToCartButtons product={product} />
+                ) : (
+                  <div className="space-y-3">
+                    <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg text-center">
+                      <p className="font-medium mb-2">💡 Cần đăng nhập để mua hàng</p>
+                      <Link 
+                        href="/login"
+                        className="bg-[#65BD60] hover:bg-[#4e9749] text-white px-6 py-2 rounded-lg font-semibold transition-all inline-block"
+                      >
+                        Đăng nhập ngay
+                      </Link>
+                    </div>
+                  </div>
+                )}
                 
                 <Link
                   href="/products"

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function DebugAPIPage() {
-  const { isAuthenticated, user, loading } = useAuth();
+  const { isAuthenticated, user, loading: authLoading } = useAuth();
   const [testResults, setTestResults] = useState<any>({});
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState("");
@@ -97,7 +97,7 @@ export default function DebugAPIPage() {
     setLoading(false);
   };
 
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen pt-20">
         <div className="container mx-auto px-4 py-20">
