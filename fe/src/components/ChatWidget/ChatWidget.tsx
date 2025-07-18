@@ -5,8 +5,13 @@ import { useChat } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 export const ChatWidget = () => {
+  const pathname = usePathname();
+  if (pathname?.startsWith('/slide')) {
+    return null;
+  }
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const { messages, isLoading, sendMessage } = useChat();
