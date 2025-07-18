@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -60,6 +61,7 @@ class CartServiceImplTest {
         cart = new CartEntity();
         cart.setId(1L);
         cart.setCustomer(customer);
+        cart.setCartItems(new ArrayList<>());
     }
 
     @Test

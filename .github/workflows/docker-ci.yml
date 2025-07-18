@@ -123,4 +123,4 @@ jobs:
           # Kiểm tra services
           docker compose ps
           
-          echo "✅ Deploy completed!" 
+          echo "✅ Deploy completed!"
