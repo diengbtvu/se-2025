@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -39,12 +40,12 @@ class ProductServiceImplTest {
         productEntity = new ProductEntity();
         productEntity.setId(1L);
         productEntity.setName("Honey");
-        productEntity.setPrice(10.0);
+        productEntity.setPrice(new BigDecimal("10.0"));
 
         productDTO = new ProductDTO();
         productDTO.setId(1L);
         productDTO.setName("Honey");
-        productDTO.setPrice(10.0);
+        productDTO.setPrice(new BigDecimal("10.0"));
     }
 
     @Test
