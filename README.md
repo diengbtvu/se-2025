@@ -1,4 +1,4 @@
-# BeeLife Ventures 🐝
+# BeeLife Ventures
 
 Hệ thống quản lý sản phẩm và đơn hàng cho BeeLife Ventures.
 
