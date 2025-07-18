@@ -1,21 +1,24 @@
 "use client";
 
+import { useState } from "react";
+import { motion } from "framer-motion";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import DriveImageWrapper from "@/components/DriveImageWrapper";
+import DriveIcon from "@/components/DriveIcon";
 
 // GoogleMap Component - Phiên bản đơn giản
 const GoogleMap = () => {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapError, setMapError] = useState(false);
 
-  useEffect(() => {
-    // Simulate loading delay
-    const timer = setTimeout(() => {
-      setMapError(true);
-    }, 1000);
+  // useEffect(() => {
+  //   // Simulate loading delay
+  //   const timer = setTimeout(() => {
+  //     setMapError(true);
+  //   }, 1000);
 
-    return () => clearTimeout(timer);
-  }, []);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   return (
     <div className="h-[400px] bg-gray-100 rounded-lg border-2 border-gray-200 overflow-hidden">
@@ -86,11 +89,14 @@ export default function Contact() {
       {/* Hero Section */}
       <section className="relative h-[40vh] flex items-center">
         <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/Career hero.webp"
+          <DriveImageWrapper
+            imageName="Career hero.webp"
             alt="Contact BeeLife"
-            fill
-            className="object-cover brightness-50"
+            width={1920}
+            height={1080}
+            className="object-cover w-full h-full brightness-50"
+            priority
+            fallbackSrc="/images/Career hero.webp"
           />
         </div>
         <div className="container mx-auto px-4 z-10 text-white">
@@ -204,75 +210,66 @@ export default function Contact() {
               <div className="space-y-8">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-[#65BD60] rounded-full flex items-center justify-center flex-shrink-0">
-                    <Image
-                      src="/images/Link.svg"
+                    <DriveIcon
+                      iconName="Link.svg"
                       alt="Location"
                       width={24}
                       height={24}
                       className="text-white"
+                      fallbackSrc="/images/Link.svg"
                     />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">Địa chỉ</h3>
-                    <p className="text-gray-600">
-                      W8FW+9J Trà Vinh<br />
-                      Tỉnh Trà Vinh<br />
-                      Việt Nam
-                    </p>
+                    <h3 className="text-lg font-semibold mb-2">Địa chỉ</h3>
+                    <p className="text-gray-600">123 Đường ABC, Quận 1, TP.HCM</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-[#65BD60] rounded-full flex items-center justify-center flex-shrink-0">
-                    <Image
-                      src="/images/Link (1).svg"
+                    <DriveIcon
+                      iconName="Link (1).svg"
                       alt="Phone"
                       width={24}
                       height={24}
                       className="text-white"
+                      fallbackSrc="/images/Link (1).svg"
                     />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">Điện thoại</h3>
-                    <p className="text-gray-600">
-                      Hotline: 1900 1234<br />
-                      Hỗ trợ kỹ thuật: 1900 5678
-                    </p>
+                    <h3 className="text-lg font-semibold mb-2">Điện thoại</h3>
+                    <p className="text-gray-600">+84 123 456 789</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-[#65BD60] rounded-full flex items-center justify-center flex-shrink-0">
-                    <Image
-                      src="/images/Link (2).svg"
+                    <DriveIcon
+                      iconName="Link (2).svg"
                       alt="Email"
                       width={24}
                       height={24}
                       className="text-white"
+                      fallbackSrc="/images/Link (2).svg"
                     />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">Email</h3>
-                    <p className="text-gray-600">
-                      info@beelife.vn<br />
-                      support@beelife.vn
-                    </p>
+                    <h3 className="text-lg font-semibold mb-2">Email</h3>
+                    <p className="text-gray-600">info@beelife.com</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-[#65BD60] rounded-full flex items-center justify-center flex-shrink-0">
-                    <Image
-                      src="/images/Link (3).svg"
+                    <DriveIcon
+                      iconName="Link (1).svg"
                       alt="Working Hours"
                       width={24}
                       height={24}
                       className="text-white"
+                      fallbackSrc="/images/Link (1).svg"
                     />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">Giờ làm việc</h3>
-                    <p className="text-gray-600">
-                      Thứ 2 - Thứ 6: 8:00 - 17:30<br />
-                      Thứ 7: 8:00 - 12:00
-                    </p>
+                    <h3 className="text-lg font-semibold mb-2">Giờ làm việc</h3>
+                    <p className="text-gray-600">Thứ 2 - Thứ 6: 8:00 - 18:00</p>
                   </div>
                 </div>
               </div>
