@@ -82,4 +82,4 @@ services:
 
 networks:
   beelife-network:
-    driver: bridge 
+    driver: bridge

@@ -55,7 +55,7 @@ public class JwtSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*")); // Sử dụng setAllowedOriginPatterns thay cho setAllowedOrigins để hỗ trợ wildcard
+        configuration.setAllowedOrigins(Arrays.asList("https://zettix.net")); // Chỉ định rõ ràng nguồn gốc được phép
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setExposedHeaders(Arrays.asList("*"));
