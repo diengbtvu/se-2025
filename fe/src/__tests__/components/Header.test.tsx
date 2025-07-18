@@ -80,7 +80,7 @@ describe('Header Component', () => {
 
     render(<Header />)
     
-    expect(screen.getByText('Quản lý Admin')).toBeInTheDocument()
+    expect(screen.getByText('Trang quản trị của tôi')).toBeInTheDocument()
   })
 
   it('calls logout when logout button is clicked', async () => {

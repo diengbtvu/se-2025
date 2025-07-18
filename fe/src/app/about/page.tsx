@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import DriveImageWrapper from "@/components/DriveImageWrapper";
+import DriveIcon from "@/components/DriveIcon";
 
 export default function About() {
   return (
@@ -25,12 +27,13 @@ export default function About() {
               </p>
             </div>
             <div>
-              <Image
-                src="/images/team-high-five.jpg"
+              <DriveImageWrapper
+                imageName="team-high-five.jpg"
                 alt="BeeLife Team"
                 width={600}
                 height={400}
                 className="rounded-lg shadow-xl"
+                fallbackSrc="/images/team-high-five.jpg"
               />
             </div>
           </div>
@@ -46,12 +49,13 @@ export default function About() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="text-center">
               <div className="w-20 h-20 bg-[#65BD60] rounded-full flex items-center justify-center mx-auto mb-6">
-                <Image
-                  src="/images/Bee.svg"
+                <DriveIcon
+                  iconName="Bee.svg"
                   alt="Innovation Icon"
                   width={40}
                   height={40}
                   className="text-white"
+                  fallbackSrc="/images/Bee.svg"
                 />
               </div>
               <h3 className="text-2xl font-semibold mb-4">Đổi mới sáng tạo</h3>
@@ -61,12 +65,13 @@ export default function About() {
             </div>
             <div className="text-center">
               <div className="w-20 h-20 bg-[#65BD60] rounded-full flex items-center justify-center mx-auto mb-6">
-                <Image
-                  src="/images/Tree.svg"
+                <DriveIcon
+                  iconName="Tree.svg"
                   alt="Sustainability Icon"
                   width={40}
                   height={40}
                   className="text-white"
+                  fallbackSrc="/images/Tree.svg"
                 />
               </div>
               <h3 className="text-2xl font-semibold mb-4">Phát triển bền vững</h3>
@@ -76,12 +81,13 @@ export default function About() {
             </div>
             <div className="text-center">
               <div className="w-20 h-20 bg-[#65BD60] rounded-full flex items-center justify-center mx-auto mb-6">
-                <Image
-                  src="/images/Join.svg"
+                <DriveIcon
+                  iconName="Join.svg"
                   alt="Community Icon"
                   width={40}
                   height={40}
                   className="text-white"
+                  fallbackSrc="/images/Join.svg"
                 />
               </div>
               <h3 className="text-2xl font-semibold mb-4">Cộng đồng</h3>
@@ -102,12 +108,13 @@ export default function About() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="mb-6">
-                <Image
-                  src="/images/image 43.webp"
+                <DriveImageWrapper
+                  imageName="Vector (1).png"
                   alt="Team Member 1"
                   width={200}
                   height={200}
                   className="rounded-full mx-auto"
+                  fallbackSrc="/images/image 43.webp"
                 />
               </div>
               <h3 className="text-xl font-semibold mb-2">Nguyễn Văn A</h3>
@@ -115,25 +122,27 @@ export default function About() {
             </div>
             <div className="text-center">
               <div className="mb-6">
-                <Image
-                  src="/images/image 43-1.webp"
+                <DriveImageWrapper
+                  imageName="Vector (3).png"
                   alt="Team Member 2"
                   width={200}
                   height={200}
                   className="rounded-full mx-auto"
+                  fallbackSrc="/images/image 43-1.webp"
                 />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Trần Thị B</h3>
+              <h3 className="text-xl font-semibold mb-2">Trần Thanh B</h3>
               <p className="text-gray-600">Giám đốc kỹ thuật</p>
             </div>
             <div className="text-center">
               <div className="mb-6">
-                <Image
-                  src="/images/image 43 (1)-1.webp"
+                <DriveImageWrapper
+                  imageName="Vector (6).png"
                   alt="Team Member 3"
                   width={200}
                   height={200}
                   className="rounded-full mx-auto"
+                  fallbackSrc="/images/image 43 (1)-1.webp"
                 />
               </div>
               <h3 className="text-xl font-semibold mb-2">Lê Văn C</h3>
@@ -141,12 +150,13 @@ export default function About() {
             </div>
             <div className="text-center">
               <div className="mb-6">
-                <Image
-                  src="/images/image 43 (2)-1.webp"
+                <DriveImageWrapper
+                  imageName="Vector (5).png"
                   alt="Team Member 4"
                   width={200}
                   height={200}
                   className="rounded-full mx-auto"
+                  fallbackSrc="/images/image 43 (2)-1.webp"
                 />
               </div>
               <h3 className="text-xl font-semibold mb-2">Phạm Thị D</h3>
