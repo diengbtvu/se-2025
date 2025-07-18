@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { adminAPI } from "@/services/adminAPI";
 
 export default function TestAuthPage() {
-  const { isAuthenticated, user, loading } = useAuth();
+  const { isAuthenticated, user, loading: authLoading } = useAuth();
   const [testResults, setTestResults] = useState<any>({});
   const [loading, setLoading] = useState(false);
 
@@ -18,7 +18,7 @@ export default function TestAuthPage() {
       results.authState = {
         isAuthenticated,
         user,
-        loading,
+        loading: authLoading,
         token: typeof window !== 'undefined' ? localStorage.getItem('token') : null
       };
 
@@ -60,7 +60,7 @@ export default function TestAuthPage() {
     }
   }, [isAuthenticated, user]);
 
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen pt-20">
         <div className="container mx-auto px-4 py-20">
