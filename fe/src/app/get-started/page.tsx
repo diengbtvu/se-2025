@@ -3,12 +3,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import DriveImageWrapper from "@/components/DriveImageWrapper";
-import DriveIcon from "@/components/DriveIcon";
 import Link from "next/link";
 
 export default function GetStarted() {
   const [step, setStep] = useState(1);
+
 
   const handleNextStep = () => {
     setStep(prev => Math.min(prev + 1, 3));
@@ -23,14 +22,13 @@ export default function GetStarted() {
       {/* Hero Section */}
       <section className="relative h-[40vh] flex items-center">
         <div className="absolute inset-0 z-0">
-          <DriveImageWrapper
-            imageName="Career hero.webp"
+          <Image
+            src="/images/Career hero.webp"
             alt="Get Started Hero"
             width={1920}
             height={1080}
             className="object-cover w-full h-full brightness-50"
             priority
-            fallbackSrc="/images/Career hero.webp"
           />
         </div>
         <div className="container mx-auto px-4 z-10 text-white">
@@ -245,26 +243,24 @@ export default function GetStarted() {
             <div className="flex justify-center gap-8">
               <div className="text-center">
                 <div className="w-16 h-16 bg-[#65BD60] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <DriveIcon
-                    iconName="Link (2).svg"
+                  <Image
+                    src="/images/Link (2).svg"
                     alt="Phone Icon"
                     width={32}
                     height={32}
                     className="text-white"
-                    fallbackSrc="/images/Link (2).svg"
                   />
                 </div>
                 <p className="text-gray-600">Hotline: 1900 1234</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 bg-[#65BD60] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <DriveIcon
-                    iconName="Link (2).svg"
+                  <Image
+                    src="/images/Link (2).svg"
                     alt="Email Icon"
                     width={32}
                     height={32}
                     className="text-white"
-                    fallbackSrc="/images/Link (2).svg"
                   />
                 </div>
                 <p className="text-gray-600">Email: support@beelife.vn</p>

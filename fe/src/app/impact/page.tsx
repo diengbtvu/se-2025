@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import DriveImageWrapper from "@/components/DriveImageWrapper";
 import { useState, useEffect } from "react";
 import { FacebookIcon, YouTubeIcon, LinkedInIcon, InstagramIcon } from "@/components/icons/SocialIcons";
 
@@ -223,13 +222,12 @@ export default function Impact() {
                 className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
               >
                 <div className="relative h-[400px]">
-                  <DriveImageWrapper
-                    imageName="provides a better bee habitat-min.webp"
+                  <Image
+                    src="/images/provides a better bee habitat-min.webp"
                     alt="Environmental Impact"
                     width={600}
                     height={400}
                     className="object-cover rounded-lg"
-                    fallbackSrc="/images/provides a better bee habitat-min.webp"
                   />
                 </div>
                 <div className="space-y-6">
@@ -308,13 +306,12 @@ export default function Impact() {
                   </ul>
                 </div>
                 <div className="relative h-[400px]">
-                  <DriveImageWrapper
-                    imageName="team-high-five.jpg"
+                  <Image
+                    src="/images/team-high-five.jpg"
                     alt="Social Impact"
                     width={600}
                     height={400}
                     className="object-cover rounded-lg"
-                    fallbackSrc="/images/team-high-five.jpg"
                   />
                 </div>
               </motion.div>
@@ -327,13 +324,12 @@ export default function Impact() {
                 className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
               >
                 <div className="relative h-[400px]">
-                  <DriveImageWrapper
-                    imageName="Untitled design (22).webp"
+                  <Image
+                    src="/images/Untitled design (22).webp"
                     alt="Economic Impact"
                     width={600}
                     height={400}
                     className="object-cover rounded-lg"
-                    fallbackSrc="/images/Untitled design (22).webp"
                   />
                 </div>
                 <div className="space-y-6">
@@ -406,13 +402,12 @@ export default function Impact() {
                 className="card p-8 text-center"
               >
                 <div className="relative w-24 h-24 mx-auto mb-6">
-                  <DriveImageWrapper
-                    imageName={story.image}
+                  <Image
+                    src={`/images/${story.image}`}
                     alt={story.name}
                     width={96}
                     height={96}
                     className="rounded-full object-cover"
-                    fallbackSrc={`/images/${story.image}`}
                   />
                 </div>
                 <p className="text-gray-600 italic mb-6">"{story.quote}"</p>

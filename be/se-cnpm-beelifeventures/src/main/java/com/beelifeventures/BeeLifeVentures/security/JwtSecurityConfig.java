@@ -4,6 +4,7 @@ package com.beelifeventures.BeeLifeVentures.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -32,9 +33,10 @@ public class JwtSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .cors(Customizer.withDefaults()) // Sử dụng corsConfigurationSource() bean
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow CORS preflight requests
                 .requestMatchers(
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
@@ -55,12 +57,12 @@ public class JwtSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://zettix.net")); // Chỉ định rõ ràng nguồn gốc được phép
+        configuration.setAllowedOrigins(List.of("*")); // Allow all origins
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setExposedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true); // Cho phép credentials nếu FE cần gửi cookie hoặc Authorization
-
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("*"));
+        // setAllowCredentials(true) is not needed for wildcard origin
+        
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

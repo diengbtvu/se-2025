@@ -1,8 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import DriveImageWrapper from "@/components/DriveImageWrapper";
-import DriveIcon from "@/components/DriveIcon";
 import Link from "next/link";
 
 export default function Growers() {
@@ -11,14 +9,13 @@ export default function Growers() {
       {/* Hero Section */}
       <section className="relative h-[60vh] flex items-center">
         <div className="absolute inset-0 z-0">
-          <DriveImageWrapper
-            imageName="olam almond acres initiative.jpg"
+          <Image
+            src="/images/olam almond acres initiative.jpg"
             alt="Growers Hero"
             width={1920}
             height={1080}
             className="object-cover w-full h-full brightness-50"
             priority
-            fallbackSrc="/images/olam almond acres initiative.jpg"
           />
         </div>
         <div className="container mx-auto px-4 z-10 text-white">
@@ -40,13 +37,12 @@ export default function Growers() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="text-center">
               <div className="w-20 h-20 bg-[#65BD60] rounded-full flex items-center justify-center mx-auto mb-6">
-                <DriveIcon
-                  iconName="timeGreen-1.svg"
+                <Image
+                  src="/images/timeGreen-1.svg"
                   alt="Productivity Icon"
                   width={40}
                   height={40}
                   className="text-white"
-                  fallbackSrc="/images/timeGreen-1.svg"
                 />
               </div>
               <h3 className="text-2xl font-semibold mb-4">Tăng năng suất</h3>
@@ -56,13 +52,12 @@ export default function Growers() {
             </div>
             <div className="text-center">
               <div className="w-20 h-20 bg-[#65BD60] rounded-full flex items-center justify-center mx-auto mb-6">
-                <DriveIcon
-                  iconName="experience.svg"
+                <Image
+                  src="/images/experience.svg"
                   alt="Quality Icon"
                   width={40}
                   height={40}
                   className="text-white"
-                  fallbackSrc="/images/experience.svg"
                 />
               </div>
               <h3 className="text-2xl font-semibold mb-4">Chất lượng cao</h3>
@@ -72,13 +67,12 @@ export default function Growers() {
             </div>
             <div className="text-center">
               <div className="w-20 h-20 bg-[#65BD60] rounded-full flex items-center justify-center mx-auto mb-6">
-                <DriveIcon
-                  iconName="Tree.svg"
+                <Image
+                  src="/images/Tree.svg"
                   alt="Sustainability Icon"
                   width={40}
                   height={40}
                   className="text-white"
-                  fallbackSrc="/images/Tree.svg"
                 />
               </div>
               <h3 className="text-2xl font-semibold mb-4">Bền vững</h3>
@@ -98,13 +92,12 @@ export default function Growers() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div>
-              <DriveImageWrapper
-                imageName="fits into existing workflows.webp"
+              <Image
+                src="/images/fits into existing workflows.webp"
                 alt="Work Process"
                 width={600}
                 height={400}
                 className="rounded-lg shadow-xl"
-                fallbackSrc="/images/fits into existing workflows.webp"
               />
             </div>
             <div>
@@ -186,4 +179,5 @@ export default function Growers() {
       </section>
     </main>
   );
-} 
+}
+ 

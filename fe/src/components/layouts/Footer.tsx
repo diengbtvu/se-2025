@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import DriveImageWrapper from '@/components/DriveImageWrapper';
+import Image from 'next/image';
 
 const Footer = () => {
   return (
@@ -13,14 +13,13 @@ const Footer = () => {
           {/* Logo and description */}
           <div className="lg:col-span-4">
             <Link href="/" className="inline-block" aria-label="BeeLife - Trang chủ">
-              <DriveImageWrapper
-                imageName="logo.png"
+              <Image
+                src="/images/logo.png"
                 alt="BeeLife Logo"
                 width={150}
                 height={70}
                 className="h-[70px] w-auto mb-6"
                 priority
-                fallbackSrc="/images/logo.png"
               />
             </Link>
             <p className="mt-6 paragraph max-w-md">

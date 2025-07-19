@@ -10,7 +10,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { ProductResponse } from "@/types/api";
 import AddToCartButtons from "@/components/common/AddToCartButtons";
 import { API_CONFIG } from "@/config/api";
-import DriveImageWrapper from "@/components/DriveImageWrapper";
 
 // Dynamic imports for ProductCard3D only
 const ProductCard3D = dynamic(() => import("@/components/3d/ProductCard3D"), {
@@ -63,15 +62,14 @@ export default function Products() {
             transition={{ duration: 0.8 }}
             className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl"
           >
-            <DriveImageWrapper
-              imageName="BeeHome Closed (5) (1)-1.jpg"
+            <Image
+              src="/images/BeeHome Closed (5) (1)-1.jpg"
               alt="BeeLife Smart Hive"
               width={500}
               height={500}
               className="object-cover w-full h-full"
               priority
               sizes="(max-width: 768px) 100vw, 50vw"
-              fallbackSrc="/images/BeeHome Closed (5) (1)-1.jpg"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
           </motion.div>
@@ -155,22 +153,14 @@ export default function Products() {
                 >
                   {/* Product Image */}
                   <Link href={`/products/${product.id}`}>
-                    {(() => {
-                      let imageUrl = product.image || '';
-                      if (imageUrl && !imageUrl.startsWith('http')) {
-                        imageUrl = `${API_CONFIG.BASE_URL}${imageUrl}`;
-                      }
-                      return (
-                        <Image
-                          src={imageUrl || "/images/honey and hive.webp"}
-                          alt={product.name}
-                          width={500}
-                          height={350}
-                          className="object-cover w-full h-64 cursor-pointer"
-                          priority
-                        />
-                      );
-                    })()}
+                    <Image
+                      src={product.imageUrl || "/images/honey and hive.webp"}
+                      alt={product.name}
+                      width={500}
+                      height={350}
+                      className="object-cover w-full h-64 cursor-pointer"
+                      priority
+                    />
                   </Link>
                   
                   <div className="p-6">
