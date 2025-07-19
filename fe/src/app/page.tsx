@@ -14,6 +14,7 @@ import DriveImage from "@/components/DriveImage";
 import { DRIVE_CONFIG } from "@/config/drive";
 import DriveVideoPlayerWrapper from "@/components/DriveVideoPlayerWrapper";
 import DriveImageWrapper from "@/components/DriveImageWrapper";
+import DriveBackgroundImage from "@/components/DriveBackgroundImage";
 
 // Cấu hình particle cho hiệu ứng ong bay
 const particlesConfig = {
@@ -96,6 +97,11 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Tách riêng useEffect cho mounted để tránh infinite loop
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Khởi tạo particle.js
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadFull(engine);
@@ -125,9 +131,6 @@ export default function Home() {
             videoName="blur.mp4"
             fallbackSrc="/videos/blur.mp4"
             className="object-cover w-full h-full brightness-50"
-            style={{
-              transform: `scale(${1 + scrollY * 0.0005}) translateY(${scrollY * 0.5}px)`
-            }}
             autoPlay={true}
             muted={true}
             loop={true}
@@ -159,18 +162,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section with Parallax */}
-      <Parallax
-        blur={0}
-        bgImage="/images/honey-comb-pattern.jpg"
-        bgImageAlt="Honeycomb Pattern"
-        strength={200}
-        className="py-20"
-      >
-        <div className="container mx-auto px-4 bg-white/90 py-16 rounded-3xl shadow-2xl">
-          <h2 className="text-4xl font-bold text-center mb-16 text-[#4E4540]">
+            {/* Features Section */}
+      <section className="py-20 bg-gradient-to-br from-[#ECF1E5] to-[#f8faf5]">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold mb-6 text-[#4E4540]">
             Tại sao chọn BeeLife?
           </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Giải pháp công nghệ tiên tiến giúp bạn nuôi ong hiệu quả và bền vững
+            </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="text-center group hover:transform hover:scale-105 transition-all duration-300">
               <div className="mb-6 overflow-hidden rounded-lg">
@@ -222,18 +224,11 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </Parallax>
+      </section>
 
-      {/* Stats Section with Counter Animation */}
-      <section className="py-20 bg-[#ECF1E5] relative overflow-hidden">
-        <div 
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: 'url("/images/honeycomb-pattern.svg")',
-            backgroundSize: '100px',
-            transform: `translateY(${scrollY * 0.2}px)`
-          }}
-        />
+      {/* Stats Section */}
+      <section className="py-20 bg-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#65BD60]/5 to-[#4e9749]/5"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
             <div className="transform hover:scale-110 transition-all duration-300 cursor-pointer">
@@ -256,15 +251,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section with Parallax */}
-      <Parallax
-        blur={0}
-        bgImage="/images/bee-on-flower.jpg"
-        bgImageAlt="Bee on Flower"
-        strength={200}
-        className="py-20"
-      >
-        <div className="container mx-auto px-4 text-center bg-black/50 py-16 rounded-3xl backdrop-blur-sm">
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-br from-[#65BD60] to-[#4e9749] relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <div className="bg-white/10 backdrop-blur-sm py-16 rounded-3xl border border-white/20">
           <h2 className="text-4xl font-bold mb-8 text-white">
             Sẵn sàng bắt đầu hành trình với BeeLife?
           </h2>
@@ -286,7 +277,8 @@ export default function Home() {
             </Link>
           </div>
         </div>
-      </Parallax>
+        </div>
+      </section>
     </main>
   );
 }

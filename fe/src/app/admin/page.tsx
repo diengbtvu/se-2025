@@ -143,7 +143,7 @@ export default function AdminDashboard() {
                 value: `${(stats.totalRevenue / 1000000).toFixed(1)}M VNĐ`,
                 icon: "💰",
                 color: "bg-purple-500",
-                link: "/admin/revenue",
+                link: null,
               },
             ].map((stat, index) => (
               <motion.div
@@ -153,7 +153,23 @@ export default function AdminDashboard() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow"
               >
-                <Link href={stat.link} className="block">
+                {stat.link ? (
+                  <Link href={stat.link} className="block">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600 mb-1">
+                          {stat.title}
+                        </p>
+                        <p className="text-2xl font-bold text-[#4E4540]">
+                          {loadingStats ? "..." : stat.value}
+                        </p>
+                      </div>
+                      <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center text-white text-xl`}>
+                        {stat.icon}
+                      </div>
+                    </div>
+                  </Link>
+                ) : (
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-600 mb-1">
@@ -167,7 +183,7 @@ export default function AdminDashboard() {
                       {stat.icon}
                     </div>
                   </div>
-                </Link>
+                )}
               </motion.div>
             ))}
           </div>
