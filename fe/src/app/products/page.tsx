@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { ProductResponse } from "@/types/api";
 import AddToCartButtons from "@/components/common/AddToCartButtons";
 import { API_CONFIG } from "@/config/api";
+import DriveImageWrapper from "@/components/DriveImageWrapper";
 
 // Dynamic imports for ProductCard3D only
 const ProductCard3D = dynamic(() => import("@/components/3d/ProductCard3D"), {
@@ -62,13 +63,15 @@ export default function Products() {
             transition={{ duration: 0.8 }}
             className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl"
           >
-            <Image
-              src="/images/BeeHome Closed (5) (1)-1.jpg"
+            <DriveImageWrapper
+              imageName="BeeHome Closed (5) (1)-1.jpg"
               alt="BeeLife Smart Hive"
-              fill
-              className="object-cover"
+              width={500}
+              height={500}
+              className="object-cover w-full h-full"
               priority
               sizes="(max-width: 768px) 100vw, 50vw"
+              fallbackSrc="/images/BeeHome Closed (5) (1)-1.jpg"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
           </motion.div>

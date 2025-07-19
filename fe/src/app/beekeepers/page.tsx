@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import DriveImageWrapper from "@/components/DriveImageWrapper";
+import DriveIcon from "@/components/DriveIcon";
 import Link from "next/link";
 
 export default function Beekeepers() {
@@ -9,11 +11,14 @@ export default function Beekeepers() {
       {/* Hero Section */}
       <section className="relative h-[60vh] flex items-center">
         <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/Untitled design (52).png"
+          <DriveImageWrapper
+            imageName="Untitled design (52).png"
             alt="Beekeepers Hero"
-            fill
-            className="object-cover brightness-50"
+            width={1920}
+            height={1080}
+            className="object-cover w-full h-full brightness-50"
+            priority
+            fallbackSrc="/images/Untitled design (52).png"
           />
         </div>
         <div className="container mx-auto px-4 z-10 text-white">
@@ -35,39 +40,35 @@ export default function Beekeepers() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="bg-[#ECF1E5] rounded-2xl p-8 hover:shadow-xl transition-all">
               <div className="mb-6">
-                <Image
-                  src="/images/monitors your colonies 24_7-min.webp"
+                <DriveImageWrapper
+                  imageName="monitors your colonies 24_7-min.webp"
                   alt="Monitoring"
-                  width={500}
-                  height={300}
-                  className="rounded-lg"
+                  width={300}
+                  height={200}
+                  className="w-full h-48 object-cover rounded-lg"
+                  fallbackSrc="/images/monitors your colonies 24_7-min.webp"
                 />
               </div>
-              <h3 className="text-2xl font-semibold mb-4">Giám sát thông minh</h3>
-              <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li>Theo dõi nhiệt độ và độ ẩm trong tổ</li>
-                <li>Cảnh báo sớm các vấn đề sức khỏe đàn ong</li>
-                <li>Dự báo thời tiết và điều kiện môi trường</li>
-                <li>Báo cáo hoạt động theo thời gian thực</li>
-              </ul>
+              <h3 className="text-2xl font-semibold mb-4 text-[#4E4540]">Giám sát thông minh</h3>
+              <p className="text-gray-600">
+                Theo dõi hoạt động đàn ong 24/7 với công nghệ IoT tiên tiến
+              </p>
             </div>
             <div className="bg-[#ECF1E5] rounded-2xl p-8 hover:shadow-xl transition-all">
               <div className="mb-6">
-                <Image
-                  src="/images/provides a better bee habitat-min.webp"
+                <DriveImageWrapper
+                  imageName="provides a better bee habitat-min.webp"
                   alt="Management"
-                  width={500}
-                  height={300}
-                  className="rounded-lg"
+                  width={300}
+                  height={200}
+                  className="w-full h-48 object-cover rounded-lg"
+                  fallbackSrc="/images/provides a better bee habitat-min.webp"
                 />
               </div>
-              <h3 className="text-2xl font-semibold mb-4">Quản lý hiệu quả</h3>
-              <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li>Lập kế hoạch chăm sóc đàn ong</li>
-                <li>Quản lý thu hoạch mật</li>
-                <li>Theo dõi chi phí và doanh thu</li>
-                <li>Tối ưu hóa quy trình sản xuất</li>
-              </ul>
+              <h3 className="text-2xl font-semibold mb-4 text-[#4E4540]">Quản lý hiệu quả</h3>
+              <p className="text-gray-600">
+                Tối ưu hóa quy trình nuôi ong với dữ liệu thời gian thực
+              </p>
             </div>
           </div>
         </div>
@@ -82,12 +83,13 @@ export default function Beekeepers() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-20 h-20 bg-[#65BD60] rounded-full flex items-center justify-center mx-auto mb-6">
-                <Image
-                  src="/images/Bee.svg"
+                <DriveIcon
+                  iconName="Bee.svg"
                   alt="Health Icon"
                   width={40}
                   height={40}
                   className="text-white"
+                  fallbackSrc="/images/Bee.svg"
                 />
               </div>
               <h3 className="text-2xl font-semibold mb-4">Sức khỏe đàn ong</h3>
@@ -97,12 +99,13 @@ export default function Beekeepers() {
             </div>
             <div className="text-center">
               <div className="w-20 h-20 bg-[#65BD60] rounded-full flex items-center justify-center mx-auto mb-6">
-                <Image
-                  src="/images/experience.svg"
+                <DriveIcon
+                  iconName="experience.svg"
                   alt="Productivity Icon"
                   width={40}
                   height={40}
                   className="text-white"
+                  fallbackSrc="/images/experience.svg"
                 />
               </div>
               <h3 className="text-2xl font-semibold mb-4">Tăng năng suất</h3>
@@ -112,12 +115,13 @@ export default function Beekeepers() {
             </div>
             <div className="text-center">
               <div className="w-20 h-20 bg-[#65BD60] rounded-full flex items-center justify-center mx-auto mb-6">
-                <Image
-                  src="/images/timeGreen-1.svg"
+                <DriveIcon
+                  iconName="timeGreen-1.svg"
                   alt="Time Icon"
                   width={40}
                   height={40}
                   className="text-white"
+                  fallbackSrc="/images/timeGreen-1.svg"
                 />
               </div>
               <h3 className="text-2xl font-semibold mb-4">Tiết kiệm thời gian</h3>
@@ -140,12 +144,13 @@ export default function Beekeepers() {
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-[#65BD60] rounded-full flex items-center justify-center flex-shrink-0">
-                    <Image
-                      src="/images/Beekeeper.svg"
+                    <DriveIcon
+                      iconName="Beekeeper.svg"
                       alt="Training Icon"
                       width={24}
                       height={24}
                       className="text-white"
+                      fallbackSrc="/images/Beekeeper.svg"
                     />
                   </div>
                   <div>
@@ -157,12 +162,13 @@ export default function Beekeepers() {
                 </div>
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-[#65BD60] rounded-full flex items-center justify-center flex-shrink-0">
-                    <Image
-                      src="/images/Link (2).svg"
+                    <DriveIcon
+                      iconName="Link (2).svg"
                       alt="Support Icon"
                       width={24}
                       height={24}
                       className="text-white"
+                      fallbackSrc="/images/Link (2).svg"
                     />
                   </div>
                   <div>
@@ -174,12 +180,13 @@ export default function Beekeepers() {
                 </div>
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-[#65BD60] rounded-full flex items-center justify-center flex-shrink-0">
-                    <Image
-                      src="/images/Join.svg"
+                    <DriveIcon
+                      iconName="Join.svg"
                       alt="Community Icon"
                       width={24}
                       height={24}
                       className="text-white"
+                      fallbackSrc="/images/Join.svg"
                     />
                   </div>
                   <div>
@@ -192,12 +199,13 @@ export default function Beekeepers() {
               </div>
             </div>
             <div>
-              <Image
-                src="/images/team-high-five.jpg"
+              <DriveImageWrapper
+                imageName="team-high-five.jpg"
                 alt="Support Team"
                 width={600}
                 height={400}
                 className="rounded-lg shadow-xl"
+                fallbackSrc="/images/team-high-five.jpg"
               />
             </div>
           </div>

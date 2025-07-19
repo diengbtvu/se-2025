@@ -1,8 +1,9 @@
 "use client";
 
-import Image from "next/image";
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
+import DriveImageWrapper from "@/components/DriveImageWrapper";
+import { useState, useEffect } from "react";
 import { FacebookIcon, YouTubeIcon, LinkedInIcon, InstagramIcon } from "@/components/icons/SocialIcons";
 
 // Animation variants
@@ -222,11 +223,13 @@ export default function Impact() {
                 className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
               >
                 <div className="relative h-[400px]">
-                  <Image
-                    src="/images/provides a better bee habitat-min.webp"
+                  <DriveImageWrapper
+                    imageName="provides a better bee habitat-min.webp"
                     alt="Environmental Impact"
-                    fill
+                    width={600}
+                    height={400}
                     className="object-cover rounded-lg"
+                    fallbackSrc="/images/provides a better bee habitat-min.webp"
                   />
                 </div>
                 <div className="space-y-6">
@@ -305,11 +308,13 @@ export default function Impact() {
                   </ul>
                 </div>
                 <div className="relative h-[400px]">
-                  <Image
-                    src="/images/team-high-five.jpg"
+                  <DriveImageWrapper
+                    imageName="team-high-five.jpg"
                     alt="Social Impact"
-                    fill
+                    width={600}
+                    height={400}
                     className="object-cover rounded-lg"
+                    fallbackSrc="/images/team-high-five.jpg"
                   />
                 </div>
               </motion.div>
@@ -322,11 +327,13 @@ export default function Impact() {
                 className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
               >
                 <div className="relative h-[400px]">
-                  <Image
-                    src="/images/bee vaccine-1.jpg"
+                  <DriveImageWrapper
+                    imageName="Untitled design (22).webp"
                     alt="Economic Impact"
-                    fill
+                    width={600}
+                    height={400}
                     className="object-cover rounded-lg"
+                    fallbackSrc="/images/Untitled design (22).webp"
                   />
                 </div>
                 <div className="space-y-6">
@@ -377,19 +384,19 @@ export default function Impact() {
               {
                 name: "Anh Nguyễn Văn A",
                 role: "Nông dân tại Đắk Lắk",
-                image: "/images/image 43 (1)-1.webp",
+                image: "Vector (3).png",
                 quote: "Nhờ BeeLife, năng suất cà phê của tôi đã tăng 40% sau một năm."
               },
               {
                 name: "Chị Trần Thị B",
                 role: "Chủ trang trại tại Lâm Đồng",
-                image: "/images/image 43 (2)-1.webp",
+                image: "Vector (5).png",
                 quote: "Công nghệ của BeeLife giúp tôi quản lý đàn ong hiệu quả hơn nhiều."
               },
               {
                 name: "Anh Phạm Văn C",
                 role: "Người nuôi ong tại Bắc Giang",
-                image: "/images/image 43 (3)-1.webp",
+                image: "Vector (1).png",
                 quote: "Thu nhập của tôi đã tăng gấp đôi nhờ áp dụng giải pháp thông minh."
               }
             ].map((story, index) => (
@@ -399,11 +406,13 @@ export default function Impact() {
                 className="card p-8 text-center"
               >
                 <div className="relative w-24 h-24 mx-auto mb-6">
-                  <Image
-                    src={story.image}
+                  <DriveImageWrapper
+                    imageName={story.image}
                     alt={story.name}
-                    fill
+                    width={96}
+                    height={96}
                     className="rounded-full object-cover"
+                    fallbackSrc={`/images/${story.image}`}
                   />
                 </div>
                 <p className="text-gray-600 italic mb-6">"{story.quote}"</p>
