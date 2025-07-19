@@ -5,8 +5,10 @@ services:
       context: ./be/se-cnpm-beelifeventures
       dockerfile: Dockerfile
     container_name: beelife-backend
+    mem_limit: 2g
     ports:
       - "8082:8082"
+      - "8888:8888"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:mysql://14.225.220.60:3306/beelifeventures?allowPublicKeyRetrieval=true&useSSL=false
@@ -21,6 +23,8 @@ services:
       retries: 3
       start_period: 60s
     restart: unless-stopped
+    volumes:
+      - ./be/se-cnpm-beelifeventures/tokens:/tokens
     networks:
       - beelife-network
 

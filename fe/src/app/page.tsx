@@ -8,13 +8,6 @@ import { Particles } from "@tsparticles/react";
 import { loadFull } from "tsparticles";
 import type { Engine, Container } from "@tsparticles/engine";
 import { motion } from "framer-motion";
-import { useDriveVideo } from "@/hooks/useDriveVideo";
-import DriveVideoPlayer from "@/components/DriveVideoPlayer";
-import DriveImage from "@/components/DriveImage";
-import { DRIVE_CONFIG } from "@/config/drive";
-import DriveVideoPlayerWrapper from "@/components/DriveVideoPlayerWrapper";
-import DriveImageWrapper from "@/components/DriveImageWrapper";
-import DriveBackgroundImage from "@/components/DriveBackgroundImage";
 
 // Cấu hình particle cho hiệu ứng ong bay
 const particlesConfig = {
@@ -127,14 +120,13 @@ export default function Home() {
         />
         */}
         <div className="absolute inset-0 z-0">
-          <DriveVideoPlayerWrapper
-            videoName="blur.mp4"
-            fallbackSrc="/videos/blur.mp4"
+          <video
+            src="/videos/blur.mp4"
             className="object-cover w-full h-full brightness-50"
-            autoPlay={true}
-            muted={true}
-            loop={true}
-            playsInline={true}
+            autoPlay
+            muted
+            loop
+            playsInline
           />
         </div>
         <div className="container mx-auto px-4 z-10">
@@ -176,8 +168,8 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="text-center group hover:transform hover:scale-105 transition-all duration-300">
               <div className="mb-6 overflow-hidden rounded-lg">
-                <DriveImageWrapper
-                  imageName="monitors your colonies 24_7-min.webp"
+                <Image
+                  src="/images/monitors your colonies 24_7-min.webp"
                   alt="24/7 Monitoring"
                   width={300}
                   height={200}
@@ -187,13 +179,13 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-semibold mb-4 text-[#4E4540] group-hover:text-[#65BD60] transition-colors">Giám sát 24/7</h3>
               <p className="text-gray-600">
-                Hệ thống theo dõi thông minh giúp bạn nắm bắt mọi hoạt động của đàn ong
+                Hệ th��ng theo dõi thông minh giúp bạn nắm bắt mọi hoạt động của đàn ong
               </p>
             </div>
             <div className="text-center group hover:transform hover:scale-105 transition-all duration-300">
               <div className="mb-6 overflow-hidden rounded-lg">
-                <DriveImageWrapper
-                  imageName="provides a better bee habitat-min.webp"
+                <Image
+                  src="/images/provides a better bee habitat-min.webp"
                   alt="Better Habitat"
                   width={300}
                   height={200}
@@ -208,8 +200,8 @@ export default function Home() {
             </div>
             <div className="text-center group hover:transform hover:scale-105 transition-all duration-300">
               <div className="mb-6 overflow-hidden rounded-lg">
-                <DriveImageWrapper
-                  imageName="honey and hive.webp"
+                <Image
+                  src="/images/honey and hive.webp"
                   alt="Quality Honey"
                   width={300}
                   height={200}
