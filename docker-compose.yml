@@ -24,7 +24,7 @@ services:
       start_period: 60s
     restart: unless-stopped
     volumes:
-      - ./be/se-cnpm-beelifeventures/tokens:/tokens
+      - ./be/se-cnpm-beelifeventures/tokens:/app/tokens
     networks:
       - beelife-network
 
