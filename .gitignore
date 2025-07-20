@@ -77,3 +77,4 @@ docker-compose.override.yml
 client_secret_*.json
 **/client_secret.json
 be/se-cnpm-beelifeventures/tokens/StoredCredential
+be/se-cnpm-beelifeventures/tokens/StoredCredential
