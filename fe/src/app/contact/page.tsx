@@ -3,8 +3,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import DriveImageWrapper from "@/components/DriveImageWrapper";
-import DriveIcon from "@/components/DriveIcon";
 
 // GoogleMap Component - Phiên bản đơn giản
 const GoogleMap = () => {
@@ -89,14 +87,13 @@ export default function Contact() {
       {/* Hero Section */}
       <section className="relative h-[40vh] flex items-center">
         <div className="absolute inset-0 z-0">
-          <DriveImageWrapper
-            imageName="Career hero.webp"
+          <Image
+            src="/images/Career hero.webp"
             alt="Contact BeeLife"
             width={1920}
             height={1080}
             className="object-cover w-full h-full brightness-50"
             priority
-            fallbackSrc="/images/Career hero.webp"
           />
         </div>
         <div className="container mx-auto px-4 z-10 text-white">
@@ -210,13 +207,12 @@ export default function Contact() {
               <div className="space-y-8">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-[#65BD60] rounded-full flex items-center justify-center flex-shrink-0">
-                    <DriveIcon
-                      iconName="Link.svg"
+                    <Image
+                      src="/images/Link.svg"
                       alt="Location"
                       width={24}
                       height={24}
                       className="text-white"
-                      fallbackSrc="/images/Link.svg"
                     />
                   </div>
                   <div>
@@ -226,13 +222,12 @@ export default function Contact() {
                 </div>
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-[#65BD60] rounded-full flex items-center justify-center flex-shrink-0">
-                    <DriveIcon
-                      iconName="Link (1).svg"
+                    <Image
+                      src="/images/Link (1).svg"
                       alt="Phone"
                       width={24}
                       height={24}
                       className="text-white"
-                      fallbackSrc="/images/Link (1).svg"
                     />
                   </div>
                   <div>
@@ -242,13 +237,12 @@ export default function Contact() {
                 </div>
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-[#65BD60] rounded-full flex items-center justify-center flex-shrink-0">
-                    <DriveIcon
-                      iconName="Link (2).svg"
+                    <Image
+                      src="/images/Link (2).svg"
                       alt="Email"
                       width={24}
                       height={24}
                       className="text-white"
-                      fallbackSrc="/images/Link (2).svg"
                     />
                   </div>
                   <div>
@@ -258,13 +252,12 @@ export default function Contact() {
                 </div>
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-[#65BD60] rounded-full flex items-center justify-center flex-shrink-0">
-                    <DriveIcon
-                      iconName="Link (1).svg"
+                    <Image
+                      src="/images/Link (1).svg"
                       alt="Working Hours"
                       width={24}
                       height={24}
                       className="text-white"
-                      fallbackSrc="/images/Link (1).svg"
                     />
                   </div>
                   <div>

@@ -1,8 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import DriveImageWrapper from "@/components/DriveImageWrapper";
-import DriveIcon from "@/components/DriveIcon";
 import Link from "next/link";
 
 export default function BeesForBuildings() {
@@ -11,14 +9,13 @@ export default function BeesForBuildings() {
       {/* Hero Section */}
       <section className="relative h-[60vh] flex items-center">
         <div className="absolute inset-0 z-0">
-          <DriveImageWrapper
-            imageName="blueberry honey bees-1.webp"
+          <Image
+            src="/images/blueberry honey bees-1.webp"
             alt="Bees For Buildings Hero"
             width={1920}
             height={1080}
             className="object-cover w-full h-full brightness-50"
             priority
-            fallbackSrc="/images/blueberry honey bees-1.webp"
           />
         </div>
         <div className="container mx-auto px-4 z-10 text-white">
@@ -47,39 +44,36 @@ export default function BeesForBuildings() {
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-[#65BD60] rounded-full flex items-center justify-center flex-shrink-0">
-                      <DriveIcon
-                        iconName="Tree.svg"
+                      <Image
+                        src="/images/Tree.svg"
                         alt="Environment Icon"
                         width={24}
                         height={24}
                         className="text-white"
-                        fallbackSrc="/images/Tree.svg"
                       />
                     </div>
                     <p className="text-gray-700">Cải thiện đa dạng sinh học đô thị</p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-[#65BD60] rounded-full flex items-center justify-center flex-shrink-0">
-                      <DriveIcon
-                        iconName="Grower.svg"
+                      <Image
+                        src="/images/Grower.svg"
                         alt="Garden Icon"
                         width={24}
                         height={24}
                         className="text-white"
-                        fallbackSrc="/images/Grower.svg"
                       />
                     </div>
                     <p className="text-gray-700">Hỗ trợ thụ phấn cho vườn đô thị</p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-[#65BD60] rounded-full flex items-center justify-center flex-shrink-0">
-                      <DriveIcon
-                        iconName="Join.svg"
+                      <Image
+                        src="/images/Join.svg"
                         alt="Community Icon"
                         width={24}
                         height={24}
                         className="text-white"
-                        fallbackSrc="/images/Join.svg"
                       />
                     </div>
                     <p className="text-gray-700">Tạo cộng đồng xanh bền vững</p>
@@ -88,13 +82,12 @@ export default function BeesForBuildings() {
               </div>
             </div>
             <div>
-              <DriveImageWrapper
-                imageName="Untitled design (22).webp"
+              <Image
+                src="/images/bee vaccine-1.jpg"
                 alt="Urban Beekeeping"
                 width={600}
                 height={400}
                 className="rounded-lg shadow-xl"
-                fallbackSrc="/images/bee vaccine-1.jpg"
               />
             </div>
           </div>
@@ -110,13 +103,12 @@ export default function BeesForBuildings() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white rounded-2xl p-8 hover:shadow-xl transition-all">
               <div className="w-16 h-16 bg-[#65BD60] rounded-full flex items-center justify-center mx-auto mb-6">
-                <DriveIcon
-                  iconName="Bee.svg"
+                <Image
+                  src="/images/Bee.svg"
                   alt="Hive Icon"
                   width={32}
                   height={32}
                   className="text-white"
-                  fallbackSrc="/images/Bee.svg"
                 />
               </div>
               <h3 className="text-2xl font-semibold mb-4 text-center">Tổ ong thông minh</h3>
@@ -126,13 +118,12 @@ export default function BeesForBuildings() {
             </div>
             <div className="bg-white rounded-2xl p-8 hover:shadow-xl transition-all">
               <div className="w-16 h-16 bg-[#65BD60] rounded-full flex items-center justify-center mx-auto mb-6">
-                  <DriveIcon
-                    iconName="experience.svg"
+                  <Image
+                    src="/images/experience.svg"
                   alt="Training Icon"
                   width={32}
                   height={32}
                   className="text-white"
-                    fallbackSrc="/images/experience.svg"
                 />
               </div>
               <h3 className="text-2xl font-semibold mb-4 text-center">Đào tạo chuyên sâu</h3>
@@ -142,13 +133,12 @@ export default function BeesForBuildings() {
             </div>
             <div className="bg-white rounded-2xl p-8 hover:shadow-xl transition-all">
               <div className="w-16 h-16 bg-[#65BD60] rounded-full flex items-center justify-center mx-auto mb-6">
-                  <DriveIcon
-                    iconName="Link (2).svg"
+                  <Image
+                    src="/images/Link (2).svg"
                   alt="Support Icon"
                   width={32}
                   height={32}
                   className="text-white"
-                    fallbackSrc="/images/Link (2).svg"
                 />
               </div>
               <h3 className="text-2xl font-semibold mb-4 text-center">Hỗ trợ liên tục</h3>
@@ -244,4 +234,5 @@ export default function BeesForBuildings() {
       </section>
     </main>
   );
-} 
+}
+ 

@@ -23,6 +23,8 @@ export default function CreateProduct() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     description: '',
@@ -42,6 +44,18 @@ export default function CreateProduct() {
     }));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -49,11 +63,21 @@ export default function CreateProduct() {
 
     try {
       // Validate required fields
-      if (!formData.name || !formData.description || formData.price <= 0 || formData.stockQuantity < 0) {
-        throw new Error('Vui lòng điền đầy đủ thông tin bắt buộc');
+      if (!formData.name || !formData.description || formData.price <= 0 || formData.stockQuantity < 0 || !selectedFile) {
+        throw new Error('Vui lòng điền đầy đủ thông tin bắt buộc và chọn hình ảnh');
       }
 
-      await adminAPI.createProduct(formData);
+      // Upload image first
+      const uploadResponse = await adminAPI.uploadProductImage(selectedFile);
+      const imageUrl = uploadResponse.url;
+
+      if (!imageUrl) {
+        throw new Error('Không thể tải lên hình ảnh');
+      }
+
+      // Create product with the new image URL
+      const productData = { ...formData, imageUrl };
+      await adminAPI.createProduct(productData);
       
       // Redirect to products list
       router.push('/admin/products');
@@ -219,29 +243,24 @@ export default function CreateProduct() {
                 </div>
               </div>
 
-              {/* Image URL */}
+              {/* Image Upload */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  URL hình ảnh <span className="text-red-500">*</span>
+                  Hình ảnh sản phẩm <span className="text-red-500">*</span>
                 </label>
                 <input
-                  type="url"
-                  name="imageUrl"
-                  value={formData.imageUrl}
-                  onChange={handleInputChange}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#65BD60] focus:border-transparent"
-                  placeholder="https://example.com/image.jpg"
+                  className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#65BD60] file:text-white hover:file:bg-[#4e9749]"
                 />
-                {formData.imageUrl && (
-                  <div className="mt-2">
+                {imagePreview && (
+                  <div className="mt-4">
                     <img
-                      src={formData.imageUrl}
-                      alt="Preview"
-                      className="w-32 h-32 object-cover rounded-lg border"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                      }}
+                      src={imagePreview}
+                      alt="Xem trước hình ảnh"
+                      className="w-40 h-40 object-cover rounded-lg border"
                     />
                   </div>
                 )}
@@ -276,4 +295,5 @@ export default function CreateProduct() {
       </div>
     </main>
   );
-} 
+}
+ 

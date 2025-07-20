@@ -73,3 +73,8 @@ docs/drafts/
 # Local configuration overrides
 docker-compose.override.yml
 **/application-local.properties 
+# Google OAuth client secret file
+client_secret_*.json
+**/client_secret.json
+be/se-cnpm-beelifeventures/tokens/StoredCredential
+be/se-cnpm-beelifeventures/tokens/StoredCredential

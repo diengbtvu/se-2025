@@ -3,9 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
-import DriveImageWrapper from "@/components/DriveImageWrapper";
 import ReCAPTCHA from "react-google-recaptcha";
 
 export default function LoginContent() {
@@ -273,14 +273,13 @@ export default function LoginContent() {
         <div className="max-w-md mx-auto">
           <div className="text-center mb-8">
             <Link href="/" className="inline-block">
-              <DriveImageWrapper
-                imageName="logo.png"
+              <Image
+                src="/images/logo.png"
                 alt="BeeLife Logo"
                 width={200}
                 height={80}
                 className="h-[80px] w-auto"
                 priority
-                fallbackSrc="/images/logo.png"
               />
             </Link>
           </div>

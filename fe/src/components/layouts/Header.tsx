@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/hooks/useCart';
-import DriveImageWrapper from '@/components/DriveImageWrapper';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -52,14 +51,13 @@ const Header = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center hover-lift" aria-label="BeeLife - Trang chủ">
-              <DriveImageWrapper
-                imageName="logo.png"
+              <Image
+                src="/images/logo.png"
                 alt="BeeLife Logo"
                 width={150}
                 height={70}
                 className="h-[70px] w-auto"
                 priority
-                fallbackSrc="/images/logo.png"
               />
             </Link>
           </div>

@@ -923,5 +923,29 @@ export const adminAPI = {
       console.error('Lỗi khi xóa sản phẩm với ràng buộc:', error);
       throw error;
     }
+  },
+
+  // Image Upload API
+  uploadProductImage: async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch(`${API_CONFIG.BASE_URL}/api/v1/files/upload`, {
+        method: 'POST',
+        body: formData,
+        // Headers are not needed here, browser will set multipart/form-data
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || `HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Lỗi khi tải ảnh lên:', error);
+      throw error;
+    }
   }
 }; 
