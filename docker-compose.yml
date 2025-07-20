@@ -72,7 +72,7 @@ services:
       - HOSTNAME=0.0.0.0
       - WATCHPACK_POLLING=true
       - CHOKIDAR_USEPOLLING=true
-      - NEXT_PUBLIC_API_URL=http://localhost:8082
+      - NEXT_PUBLIC_API_URL=https://zettix.net
     volumes:
       - ./fe:/app
       - /app/node_modules
