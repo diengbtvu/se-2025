@@ -48,7 +48,17 @@ yarn install
 ### 3. Cấu hình môi trường
 Tạo file `.env.local` trong thư mục `fe/`:
 ```env
+# Gemini AI Configuration
+NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
+NEXT_PUBLIC_GEMINI_API_URL=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
 
+# reCAPTCHA Configuration
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your_recaptcha_site_key_here
+
+# Google Drive Configuration
+NEXT_PUBLIC_GOOGLE_DRIVE_API_KEY=your_google_drive_api_key_here
+NEXT_PUBLIC_GOOGLE_DRIVE_IMAGES_FOLDER_ID=your_google_drive_images_folder_id_here
+NEXT_PUBLIC_GOOGLE_DRIVE_VIDEOS_FOLDER_ID=your_google_drive_videos_folder_id_here
 
 ```
 
