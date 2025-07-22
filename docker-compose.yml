@@ -10,10 +10,6 @@ services:
       - "8082:8082"
       - "8888:8888"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:mysql://14.225.220.60:3306/beelifeventures?allowPublicKeyRetrieval=true&useSSL=false
-      - SPRING_DATASOURCE_USERNAME=beelife_user
-      - SPRING_DATASOURCE_PASSWORD=dfjsdbA3f@a!@#sdb
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_JPA_SHOW_SQL=true
     healthcheck:
