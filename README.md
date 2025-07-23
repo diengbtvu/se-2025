@@ -118,6 +118,10 @@ mvn spring-boot:run
 4. Push to branch (`git push origin feature/AmazingFeature`)
 5. Tạo Pull Request
 
+## Bản thiết kế Figma design
+
+https://www.figma.com/design/05Wq9VVWOjP9R6xwCecbzI/Bee?node-id=0-1&t=JDYHM03S92iALkZ0-1
+
 ## 📝 License
 
 Distributed under the MIT License.
