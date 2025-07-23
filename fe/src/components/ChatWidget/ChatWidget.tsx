@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useChat } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,6 +15,16 @@ export const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const { messages, isLoading, sendMessage } = useChat();
+
+  // Thêm ref cho vùng hiển thị tin nhắn
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  // Tự động cuộn xuống cuối khi có tin nhắn mới
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, isOpen]);
 
   const handleToggleChat = () => {
     setIsOpen(!isOpen);
@@ -169,6 +179,8 @@ export const ChatWidget = () => {
                   </div>
                 </motion.div>
               ))}
+              {/* ref để cuộn xuống cuối */}
+              <div ref={messagesEndRef} />
             </div>
 
             {/* Input */}
