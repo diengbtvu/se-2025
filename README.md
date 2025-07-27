@@ -129,4 +129,3 @@ Distributed under the MIT License.
 ---
 
 **Made with ❤️ by BeeLife Team** 
-cu cd test
